@@ -12,7 +12,15 @@ import { EventsPage } from './pages/EventsPage';
 import { TravelGuidePage } from './pages/TravelGuidePage';
 import { MapPage } from './pages/MapPage';
 import { ContactPage } from './pages/ContactPage';
-
+import { ProtectedRoute } from './components/admin/ProtectedRoute';
+import { AdminLayout } from './components/admin/AdminLayout';
+import { Login } from './pages/admin/Login';
+import { Dashboard } from './pages/admin/Dashboard';
+import { Users } from './pages/admin/Users';
+import { Inquiries } from './pages/admin/Inquiries';
+import { ContentManager } from './pages/admin/ContentManager';
+import { PageEditor } from './pages/admin/PageEditor';
+import { DynamicPage } from './pages/DynamicPage';
 function NotFound() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
@@ -49,7 +57,33 @@ export const router = createBrowserRouter([
       { path: 'travel-guide', Component: TravelGuidePage },
       { path: 'map', Component: MapPage },
       { path: 'contact', Component: ContactPage },
+      { path: 'p/:slug', Component: DynamicPage },
       { path: '*', Component: NotFound },
+    ],
+  },
+  {
+    path: '/admin',
+    children: [
+      { path: 'login', Component: Login },
+      {
+        path: '',
+        Component: ProtectedRoute,
+        children: [
+          {
+            path: '',
+            Component: AdminLayout,
+            children: [
+              { index: true, Component: Dashboard },
+              { path: 'users', Component: Users },
+              { path: 'inquiries', Component: Inquiries },
+              { path: 'content', Component: ContentManager },
+              { path: 'content/:id', Component: PageEditor },
+              { path: 'content/edit/:id', Component: PageEditor },
+              { path: 'content/new', Component: PageEditor },
+            ],
+          },
+        ],
+      },
     ],
   },
 ]);

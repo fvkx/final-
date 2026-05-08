@@ -1,6 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { ArrowDown, Waves, Landmark, TreePine, Calendar, Map, BookOpen, Phone } from 'lucide-react';
+import { ArrowDown, Waves, Landmark, TreePine, Calendar, Map, BookOpen, Phone, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { contentApi } from '../lib/adminApi';
+import { API_BASE_URL } from '../lib/apiConfig';
+import { DynamicModal } from '../components/DynamicModal';
 
 const categoryCards = [
   {
@@ -9,6 +13,7 @@ const categoryCards = [
     icon: Waves,
     path: '/tourist-spots',
     color: 'from-cyan-500 to-blue-600',
+    category: 'tourist_spot',
     image: 'https://images.unsplash.com/photo-1758782551916-1723a9cd00eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwdHJvcGljYWwlMjBiZWFjaCUyMGNvYXN0bGluZXxlbnwxfHx8fDE3Nzc5NjU4OTR8MA&ixlib=rb-4.1.0&q=80&w=1080'
   },
   {
@@ -24,6 +29,7 @@ const categoryCards = [
     description: 'Traditions, crafts, and local identity',
     icon: Landmark,
     path: '/culture',
+    category: 'culture',
     color: 'from-amber-500 to-orange-600',
     image: 'https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwaW5kaWdlbm91cyUyMGN1bHR1cmUlMjB3ZWF2aW5nJTIwY3JhZnRzfGVufDF8fHx8MTc3Nzk2NTkwMHww&ixlib=rb-4.1.0&q=80&w=1080'
   },
@@ -32,6 +38,7 @@ const categoryCards = [
     description: 'Fiestas, festivals & celebrations',
     icon: Calendar,
     path: '/events',
+    category: 'event',
     color: 'from-purple-500 to-pink-600',
     image: 'https://images.unsplash.com/photo-1581513118044-696c147c1a66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwZmVzdGl2YWwlMjBjb2xvcmZ1bCUyMGNlbGVicmF0aW9ufGVufDF8fHx8MTc3Nzk2NTg5NXww&ixlib=rb-4.1.0&q=80&w=1080'
   },
@@ -40,6 +47,7 @@ const categoryCards = [
     description: 'Tips, transport & accommodation',
     icon: TreePine,
     path: '/travel-guide',
+    category: 'travel_guide',
     color: 'from-lime-500 to-green-600',
     image: 'https://images.unsplash.com/photo-1739769234606-6ca9c9ecc925?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMG1vdW50YWluJTIwaGlraW5nJTIwbmF0dXJlJTIwdHJhaWx8ZW58MXx8fHwxNzc3OTY1ODk5fDA&ixlib=rb-4.1.0&q=80&w=1080'
   },
@@ -53,14 +61,45 @@ const categoryCards = [
   }
 ];
 
-const highlights = [
-  { label: 'Tourist Spots', value: '9+', desc: 'Natural & heritage sites' },
-  { label: 'Festivals', value: '6+', desc: 'Annual celebrations' },
-  { label: 'Barangays', value: '26', desc: 'Vibrant communities' },
-  { label: 'Macajalar Bay', value: '∞', desc: 'Stunning coastline' },
-];
-
 export function Home() {
+  const [featuredPages, setFeaturedPages] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    spots: 0,
+    events: 0,
+    traditions: 0
+  });
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchContent();
+  }, []);
+
+  const fetchContent = async () => {
+    try {
+      const response = await contentApi.getAll();
+      if (response.success) {
+        const allPages = response.data;
+        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published').slice(0, 3));
+        
+        // Calculate counts
+        setStats({
+          spots: allPages.filter((p: any) => p.category === 'tourist_spot').length,
+          events: allPages.filter((p: any) => p.category === 'event').length,
+          traditions: allPages.filter((p: any) => p.category === 'culture').length,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch home content:', error);
+    }
+  };
+
+  const highlights = [
+    { label: 'Tourist Spots', value: `${stats.spots}+`, desc: 'Natural & heritage sites' },
+    { label: 'Festivals', value: `${stats.events}+`, desc: 'Annual celebrations' },
+    { label: 'Barangays', value: '26', desc: 'Vibrant communities' },
+    { label: 'Culture', value: `${stats.traditions}+`, desc: 'Living traditions' },
+  ];
+
   return (
     <div>
       {/* Hero Section */}
@@ -123,6 +162,57 @@ export function Home() {
           ))}
         </div>
       </section>
+
+      {/* Featured Content from CMS */}
+      {featuredPages.length > 0 && (
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+              <div>
+                <span className="text-emerald-600 font-semibold text-sm uppercase tracking-widest">Handpicked for you</span>
+                <h2 className="text-4xl font-extrabold text-gray-900 mt-2">Featured Destinations</h2>
+              </div>
+              <Link to="/tourist-spots" className="text-emerald-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                View all destinations <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredPages.map((page) => (
+                <div 
+                  key={page.id} 
+                  onClick={() => setSelectedSlug(page.slug)} 
+                  className="group bg-gray-50 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 cursor-pointer"
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <ImageWithFallback
+                      src={page.image_url || 'https://images.unsplash.com/photo-1758782551916-1723a9cd00eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080'}
+                      alt={page.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="bg-white/90 backdrop-blur-md text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        {page.category.replace('_', ' ')}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors mb-2">
+                      {page.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm line-clamp-2 mb-4">
+                      {page.description || 'Discover the unique beauty and heritage of this featured Balingasag location.'}
+                    </p>
+                    <span className="text-emerald-600 text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                      Explore Experience <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Category Cards */}
       <section className="py-20 px-4 bg-gray-50">
@@ -252,6 +342,12 @@ export function Home() {
           </div>
         </div>
       </section>
+      {/* Detail Modal */}
+      <DynamicModal 
+        slug={selectedSlug || ''} 
+        isOpen={!!selectedSlug} 
+        onClose={() => setSelectedSlug(null)} 
+      />
     </div>
   );
 }

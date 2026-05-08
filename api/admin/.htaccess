@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+# In Apache 2.4.13+, this also works:
+CGIPassAuth On

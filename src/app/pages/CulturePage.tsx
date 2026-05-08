@@ -1,12 +1,36 @@
-import { cultureSections } from '../data/culture';
+import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { CheckCircle2 } from 'lucide-react';
+import { ChevronRight, Landmark } from 'lucide-react';
+import { contentApi } from '../lib/adminApi';
+import { Link } from 'react-router-dom';
+import { DynamicModal } from '../components/DynamicModal';
 
 export function CulturePage() {
+  const [pages, setPages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPages();
+  }, []);
+
+  const fetchPages = async () => {
+    try {
+      const response = await contentApi.getAll('culture');
+      if (response.success) {
+        setPages(response.data.filter((p: any) => p.status === 'published'));
+      }
+    } catch (error) {
+      console.error('Failed to fetch culture pages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="relative bg-amber-800 py-20 px-4 text-white overflow-hidden">
+      <div className="relative bg-amber-800 py-24 px-4 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <ImageWithFallback
             src="https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwaW5kaWdlbm91cyUyMGN1bHR1cmUlMjB3ZWF2aW5nJTIwY3JhZnRzfGVufDF8fHx8MTc3Nzk2NTkwMHww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -15,73 +39,82 @@ export function CulturePage() {
           />
         </div>
         <div className="relative max-w-4xl mx-auto text-center">
-          <span className="text-amber-300 font-semibold text-sm uppercase tracking-widest">Traditions & Identity</span>
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-2 mb-4">Local Culture & Heritage</h1>
-          <p className="text-amber-100 text-lg max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-1.5 mb-6">
+            <Landmark className="w-4 h-4 text-amber-300" />
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-100">Traditions & Identity</span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Local Culture & Heritage</h1>
+          <p className="text-amber-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Explore the living traditions, indigenous heritage, and vibrant cultural identity that define the soul of Balingasag.
           </p>
         </div>
       </div>
 
-      {/* Intro Banner */}
-      <div className="bg-amber-50 border-b border-amber-100">
-        <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-          <p className="text-amber-900 text-lg leading-relaxed">
-            Balingasag's cultural identity is a rich tapestry woven from the traditions of the <strong>Higaonon indigenous peoples</strong>, centuries of <strong>Spanish colonial influence</strong>, and the everyday customs of a thriving coastal and agricultural community. Understanding this heritage is key to appreciating the depth and warmth of Balingasag's spirit.
-          </p>
-        </div>
-      </div>
-
-      {/* Culture Sections */}
-      <div className="max-w-6xl mx-auto px-4 py-16 space-y-20">
-        {cultureSections.map((section, idx) => (
-          <div
-            key={section.id}
-            className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-start`}
-          >
-            <div className={idx % 2 === 1 ? 'lg:order-2' : ''}>
-              <span className="text-amber-600 text-sm font-semibold uppercase tracking-widest">{section.subtitle}</span>
-              <h2 className="text-3xl font-extrabold text-gray-900 mt-2 mb-5">{section.title}</h2>
-              <p className="text-gray-600 leading-relaxed mb-6">{section.description}</p>
-
-              {section.facts && section.facts.length > 0 && (
-                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5">
-                  <h4 className="font-semibold text-amber-900 mb-3">Key Facts</h4>
-                  <ul className="space-y-2">
-                    {section.facts.map((fact) => (
-                      <li key={fact} className="flex items-start gap-2 text-sm text-gray-700">
-                        <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                        {fact}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div className={`rounded-2xl overflow-hidden shadow-xl aspect-[4/3] ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-              <ImageWithFallback
-                src={section.imageUrl}
-                alt={section.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
+      {/* Content List */}
+      <div className="max-w-6xl mx-auto px-4 py-20">
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>
-        ))}
+        ) : pages.length === 0 ? (
+          <div className="text-center py-20 text-gray-500 italic">
+            Cultural heritage content is being prepared. Please check back soon.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {pages.map((page, idx) => (
+              <div
+                key={page.id}
+                onClick={() => setSelectedSlug(page.slug)}
+                className="group flex flex-col bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer"
+              >
+                <div className="relative h-72 overflow-hidden">
+                  <ImageWithFallback
+                    src={page.image_url || 'https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080'}
+                    alt={page.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-amber-700 transition-colors mb-3">
+                    {page.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6 line-clamp-3 leading-relaxed">
+                    {page.description || `Discover the rich history and traditions associated with ${page.title}. Click to explore detailed highlights and media.`}
+                  </p>
+                  <span className="text-amber-700 font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Explore Heritage <ChevronRight className="w-5 h-5" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Cultural Respect Note */}
-      <div className="bg-amber-700 text-white py-12 px-4">
+      <div className="bg-amber-900 text-white py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h3 className="text-2xl font-bold mb-3">Visiting Indigenous Communities</h3>
-          <p className="text-amber-100 leading-relaxed">
-            When visiting indigenous Higaonon communities in Balingasag's upland barangays, please show respect for their customs, ask permission before photography, and engage only through officially arranged community tours. Your respectful engagement directly supports the preservation of living cultural heritage.
+          <h3 className="text-3xl font-bold mb-6">Visiting Indigenous Communities</h3>
+          <p className="text-amber-100 text-lg leading-relaxed mb-8">
+            When visiting indigenous Higaonon communities in Balingasag's upland barangays, please show respect for their customs, ask permission before photography, and engage only through officially arranged community tours.
           </p>
-          <p className="text-amber-200 text-sm mt-4">
-            Contact the Municipal Tourism Office to arrange culturally sensitive guided visits.
-          </p>
+          <Link
+            to="/contact"
+            className="inline-block bg-amber-700 hover:bg-amber-600 text-white px-8 py-3 rounded-xl font-bold transition-all border border-amber-600"
+          >
+            Arrange a Guided Visit
+          </Link>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      <DynamicModal 
+        slug={selectedSlug || ''} 
+        isOpen={!!selectedSlug} 
+        onClose={() => setSelectedSlug(null)} 
+      />
     </div>
   );
 }

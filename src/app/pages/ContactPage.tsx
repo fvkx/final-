@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { inquiriesApi } from '../lib/adminApi';
 
 interface FormData {
   fullName: string;
@@ -42,11 +43,14 @@ export function ContactPage() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    // Simulate a short delay (replace with actual API call when backend is ready)
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    console.log('Inquiry submitted:', data);
-    setSubmitted(true);
-    reset();
+    try {
+      await inquiriesApi.create(data);
+      setSubmitted(true);
+      reset();
+    } catch (error) {
+      console.error('Failed to submit inquiry:', error);
+      alert('Failed to send message. Please try again later.');
+    }
   };
 
   return (
