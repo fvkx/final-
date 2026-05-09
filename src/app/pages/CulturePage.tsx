@@ -62,7 +62,7 @@ export function CulturePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {pages.map((page, idx) => (
+            {pages.map((page) => (
               <div
                 key={page.id}
                 onClick={() => setSelectedSlug(page.slug)}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { inquiriesApi } from '../../lib/adminApi';
 import { Trash2, CheckCircle, MailOpen, Eye } from 'lucide-react';
 

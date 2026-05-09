@@ -1,6 +1,5 @@
-import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, MapPin, Mail, Settings, LogOut, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, Mail, LogOut, FileText } from 'lucide-react';
 import { authApi } from '../../lib/adminApi';
 
 export function AdminLayout() {

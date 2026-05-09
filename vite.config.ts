@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_BACKEND_URL || 'http://localhost/website-app',
+          target: env.VITE_BACKEND_URL || 'http://localhost/new',
           changeOrigin: true,
         }
       }

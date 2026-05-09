@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import { ArrowDown, Waves, Landmark, TreePine, Calendar, Map, BookOpen, Phone, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { contentApi } from '../lib/adminApi';
-import { API_BASE_URL } from '../lib/apiConfig';
 import { DynamicModal } from '../components/DynamicModal';
 
 const categoryCards = [

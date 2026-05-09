@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, ChevronRight, Info, Waves, TreePine, Mountain } from 'lucide-react';
+import { Search, ChevronRight, Info, Waves } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { contentApi } from '../lib/adminApi';
-import { Link } from 'react-router-dom';
+
 import { DynamicModal } from '../components/DynamicModal';
 
 export function TouristSpots() {

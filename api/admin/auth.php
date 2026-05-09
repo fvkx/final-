@@ -8,7 +8,7 @@ function base64url_encode($data) {
 }
 
 function base64url_decode($data) {
-    return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    return base64_decode(strtr($data, '-_', '+/'));
 }
 
 function generateToken($payload) {
@@ -47,9 +47,7 @@ function verifyToken() {
         $payload = base64url_decode($tokenParts[1]);
         $signature_provided = $tokenParts[2];
         
-        $base64UrlHeader = base64url_encode($header);
-        $base64UrlPayload = base64url_encode($payload);
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $SECRET_KEY, true);
+        $signature = hash_hmac('sha256', $tokenParts[0] . "." . $tokenParts[1], $SECRET_KEY, true);
         $base64UrlSignature = base64url_encode($signature);
         
         if ($base64UrlSignature === $signature_provided) {
@@ -69,7 +67,7 @@ function verifyToken() {
 }
 
 // Handle auth requests
-if (basename($_SERVER['PHP_SELF']) == 'auth.php') {
+if (basename($_SERVER['SCRIPT_FILENAME']) == 'auth.php') {
     $method = $_SERVER['REQUEST_METHOD'];
     
     if ($method == 'POST') {
