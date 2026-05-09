@@ -78,8 +78,8 @@ export function Home() {
       const response = await contentApi.getAll();
       if (response.success) {
         const allPages = response.data;
-        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published').slice(0, 3));
-        
+        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published' && p.category === 'tourist_spot').slice(0, 3));
+
         // Calculate counts
         setStats({
           spots: allPages.filter((p: any) => p.category === 'tourist_spot').length,
@@ -95,7 +95,7 @@ export function Home() {
   const highlights = [
     { label: 'Tourist Spots', value: `${stats.spots}+`, desc: 'Natural & heritage sites' },
     { label: 'Festivals', value: `${stats.events}+`, desc: 'Annual celebrations' },
-    { label: 'Barangays', value: '26', desc: 'Vibrant communities' },
+    { label: 'Barangays', value: '30', desc: 'Vibrant communities' },
     { label: 'Culture', value: `${stats.traditions}+`, desc: 'Living traditions' },
   ];
 
@@ -178,9 +178,9 @@ export function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuredPages.map((page) => (
-                <div 
-                  key={page.id} 
-                  onClick={() => setSelectedSlug(page.slug)} 
+                <div
+                  key={page.id}
+                  onClick={() => setSelectedSlug(page.slug)}
                   className="group bg-gray-50 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 cursor-pointer"
                 >
                   <div className="relative h-64 overflow-hidden">
@@ -342,10 +342,10 @@ export function Home() {
         </div>
       </section>
       {/* Detail Modal */}
-      <DynamicModal 
-        slug={selectedSlug || ''} 
-        isOpen={!!selectedSlug} 
-        onClose={() => setSelectedSlug(null)} 
+      <DynamicModal
+        slug={selectedSlug || ''}
+        isOpen={!!selectedSlug}
+        onClose={() => setSelectedSlug(null)}
       />
     </div>
   );
