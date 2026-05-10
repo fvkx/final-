@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { getPageBySlug } from '../lib/cms';
 import { SectionRenderer } from '../components/SectionRenderer';
 
 export function DynamicPage() {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === '1';
+  
   const [page, setPage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -12,11 +15,11 @@ export function DynamicPage() {
     if (slug) {
       fetchPage();
     }
-  }, [slug]);
+  }, [slug, isPreview]);
 
   const fetchPage = async () => {
     setLoading(true);
-    const data = await getPageBySlug(slug as string);
+    const data = await getPageBySlug(slug as string, isPreview);
     setPage(data);
     setLoading(false);
   };

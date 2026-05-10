@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { usersApi } from '../../lib/adminApi';
 import { Trash2, UserPlus } from 'lucide-react';
 
@@ -16,7 +16,7 @@ export function Users() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'viewer' });
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const res = await usersApi.getAll();
@@ -26,7 +26,7 @@ export function Users() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -37,7 +37,7 @@ export function Users() {
       try {
         await usersApi.delete(id);
         fetchUsers();
-      } catch (error) {
+      } catch {
         alert('Failed to delete user');
       }
     }
@@ -50,8 +50,9 @@ export function Users() {
       setShowModal(false);
       setFormData({ username: '', email: '', password: '', role: 'viewer' });
       fetchUsers();
-    } catch (error: any) {
-      alert(error.message || 'Failed to create user');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      alert(message);
     }
   };
 

@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 INSERT IGNORE INTO categories (name, slug) VALUES 
-('Tourist Spot', 'tourist-spot'), 
+('Tourist Spot', 'tourist_spot'), 
 ('Culture & Heritage', 'culture'), 
 ('Events & Festivals', 'event'), 
-('Travel Guide', 'travel-guide');
+('Travel Guide', 'travel_guide');
 
 -- 4. Content Statuses
 CREATE TABLE IF NOT EXISTS content_statuses (
@@ -49,7 +49,11 @@ CREATE TABLE IF NOT EXISTS content_pages (
     slug VARCHAR(255) NOT NULL UNIQUE,
     category_id INT NOT NULL,
     image_url VARCHAR(500),
+<<<<<<< HEAD
     description TEXT DEFAULT NULL,
+=======
+    description TEXT,
+>>>>>>> 8d2200f (improve admin content system)
     featured BOOLEAN DEFAULT FALSE,
     status_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -64,7 +68,7 @@ CREATE TABLE IF NOT EXISTS section_types (
     type_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-INSERT IGNORE INTO section_types (type_name) VALUES ('banner'), ('text'), ('gallery'), ('facts'), ('map');
+INSERT IGNORE INTO section_types (type_name) VALUES ('banner'), ('rich_text'), ('gallery'), ('facts'), ('map');
 
 -- 7. Content Sections
 CREATE TABLE IF NOT EXISTS content_sections (

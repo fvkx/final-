@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { inquiriesApi } from '../../lib/adminApi';
 import { Trash2, CheckCircle, MailOpen, Eye } from 'lucide-react';
 
@@ -18,7 +18,7 @@ export function Inquiries() {
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [filter, setFilter] = useState('all');
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     setLoading(true);
     try {
       const res = await inquiriesApi.getAll(1, { status: filter, search: '' });
@@ -28,7 +28,7 @@ export function Inquiries() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   useEffect(() => {
     fetchInquiries();
@@ -41,7 +41,7 @@ export function Inquiries() {
       if (selectedInquiry && selectedInquiry.id === id) {
         setSelectedInquiry({ ...selectedInquiry, status });
       }
-    } catch (error) {
+    } catch {
       alert('Failed to update status');
     }
   };
@@ -52,7 +52,7 @@ export function Inquiries() {
         await inquiriesApi.delete(id);
         if (selectedInquiry?.id === id) setSelectedInquiry(null);
         fetchInquiries();
-      } catch (error) {
+      } catch {
         alert('Failed to delete inquiry');
       }
     }

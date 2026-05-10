@@ -82,9 +82,10 @@ export async function getMapLocations(): Promise<MapLocation[]> {
   return mapLocations;
 }
 
-export async function getPageBySlug(slug: string) {
+export async function getPageBySlug(slug: string, preview: boolean = false) {
   try {
-    const response = await fetch(`${API_BASE_URL}/content.php?slug=${slug}`);
+    const url = `${API_BASE_URL}/content.php?slug=${slug}${preview ? '&preview=1' : ''}`;
+    const response = await fetch(url);
     if (response.ok) {
       const result = await response.json();
       return result.data;
