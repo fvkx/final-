@@ -16,7 +16,7 @@ export function TravelGuidePage() {
 
   const fetchGuides = async () => {
     try {
-      const response = await contentApi.getAll('travel_guide');
+      const response = await contentApi.getAll('travel-guide');
       if (response.success) {
         setGuides(response.data.filter((p: any) => p.status === 'published'));
       }

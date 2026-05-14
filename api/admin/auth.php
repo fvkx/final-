@@ -82,7 +82,12 @@ if (basename($_SERVER['SCRIPT_FILENAME']) == 'auth.php') {
         $username = $input['username'] ?? '';
         $password = $input['password'] ?? '';
         
-        $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
+        $stmt = $db->prepare("
+            SELECT u.*, r.role_name as role 
+            FROM users u 
+            JOIN roles r ON u.role_id = r.id 
+            WHERE u.username = :username
+        ");
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         

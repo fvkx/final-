@@ -4,10 +4,10 @@ import { contentApi } from '../../lib/adminApi';
 import { Link } from 'react-router-dom';
 
 const categories = [
-  { id: 'tourist_spot', name: 'Tourist Spots', icon: Globe, color: 'text-emerald-600 bg-emerald-50' },
+  { id: 'tourist-spot', name: 'Tourist Spots', icon: Globe, color: 'text-emerald-600 bg-emerald-50' },
   { id: 'culture', name: 'Culture & Heritage', icon: FileText, color: 'text-amber-600 bg-amber-50' },
   { id: 'event', name: 'Events', icon: Layout, color: 'text-purple-600 bg-purple-50' },
-  { id: 'travel_guide', name: 'Travel Guide', icon: FileText, color: 'text-blue-600 bg-blue-50' },
+  { id: 'travel-guide', name: 'Travel Guide', icon: FileText, color: 'text-blue-600 bg-blue-50' },
 ];
 
 export function ContentManager() {
@@ -47,7 +47,9 @@ export function ContentManager() {
 
   const filteredPages = pages.filter(page => {
     const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || page.category === activeCategory;
+    // Backend returns category_slug from the JOIN
+    const pageCategory = page.category_slug || page.category;
+    const matchesCategory = activeCategory === 'all' || pageCategory === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -102,7 +104,8 @@ export function ContentManager() {
         ) : (
           <div className="divide-y divide-gray-100">
             {filteredPages.map((page) => {
-              const category = categories.find(c => c.id === page.category);
+              const pageCategory = page.category_slug || page.category;
+              const category = categories.find(c => c.id === pageCategory);
               const Icon = category?.icon || Globe;
               return (
                 <div key={page.id} className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between group">

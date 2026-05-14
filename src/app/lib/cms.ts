@@ -27,7 +27,7 @@ export async function getDestinations(): Promise<Destination[]> {
       return result.data.map((place: any) => ({
         id: String(place.id),
         name: place.name,
-        category: place.category === 'tourist_spot' ? 'Nature' : 'Heritage', // basic mapping
+        category: place.category === 'tourist-spot' ? 'Nature' : 'Heritage', // basic mapping
         location: 'Balingasag, Misamis Oriental', // Default since not in DB
         description: place.description,
         longDescription: place.description, // Default since not in DB

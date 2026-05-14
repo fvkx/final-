@@ -9,7 +9,7 @@ import { contentApi, mediaApi } from '../../lib/adminApi';
 
 const SECTION_TYPES = [
   { id: 'banner', name: 'Banner', icon: ImageIcon, description: 'Hero section with background image' },
-  { id: 'rich_text', name: 'Rich Text', icon: Type, description: 'Standard content block' },
+  { id: 'text', name: 'Rich Text', icon: Type, description: 'Standard content block' },
   { id: 'gallery', name: 'Gallery', icon: LayoutGrid, description: 'Images in Grid or Bento layout' },
   { id: 'facts', name: 'Facts/List', icon: ListChecks, description: 'Highlights or key information' },
 ];
@@ -24,8 +24,7 @@ export function PageEditor() {
   const [page, setPage] = useState<any>({
     title: '',
     slug: '',
-    description: '',
-    category: 'tourist_spot',
+    category: 'tourist-spot',
     status: 'draft',
     featured: false
   });
@@ -60,7 +59,7 @@ export function PageEditor() {
   const addSection = (type: string) => {
     const newData: any = { type, data: {} };
     if (type === 'banner') newData.data = { title: '', subtitle: '', imageUrl: '' };
-    if (type === 'rich_text') newData.data = { body: '' };
+    if (type === 'text') newData.data = { body: '' };
     if (type === 'gallery') newData.data = { layout: 'grid', images: [] };
     if (type === 'facts') newData.data = { title: 'Highlights', items: [] };
     
@@ -222,7 +221,7 @@ export function PageEditor() {
                   </div>
                 )}
 
-                {section.type === 'rich_text' && (
+                {(section.type === 'text' || section.type === 'rich_text') && (
                   <textarea
                     rows={6}
                     placeholder="Write your content here..."
@@ -384,10 +383,10 @@ export function PageEditor() {
                   value={page.category}
                   onChange={(e) => setPage({ ...page, category: e.target.value })}
                 >
-                  <option value="tourist_spot">Tourist Spot</option>
+                  <option value="tourist-spot">Tourist Spot</option>
                   <option value="culture">Culture & Heritage</option>
                   <option value="event">Event</option>
-                  <option value="travel_guide">Travel Guide</option>
+                  <option value="travel-guide">Travel Guide</option>
                 </select>
               </div>
               <div>

@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS content_pages (
     slug VARCHAR(255) NOT NULL UNIQUE,
     category_id INT NOT NULL,
     image_url VARCHAR(500),
+    description TEXT DEFAULT NULL,
     featured BOOLEAN DEFAULT FALSE,
     status_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -97,13 +98,12 @@ CREATE TABLE IF NOT EXISTS inquiries (
 );
 
 -- Default Admin (password: admin123)
--- Hash generated via password_hash('admin123', PASSWORD_BCRYPT)
+-- Hash generated via: php -r "echo password_hash('admin123', PASSWORD_BCRYPT);"
 INSERT IGNORE INTO users (username, email, password_hash, role_id) 
-SELECT 'admin', 'admin@balingasag.gov.ph', '$2y$10$w8u7tVbWq/B90A3v1A5y1.K/Y0Oa17S534Pq5sQoQjD68e219o6uK', id 
+SELECT 'admin', 'admin@balingasag.gov.ph', '$2y$12$W1VC.sZBbJupt4FVbdMZM.Zu7kegQqr8DGOiW6vlsHQIviuWPb/dG', id 
 FROM roles WHERE role_name = 'admin';
 
 -- Default Editor (password: editor123)
 INSERT IGNORE INTO users (username, email, password_hash, role_id) 
-SELECT 'editor', 'editor@balingasag.gov.ph', '$2y$10$QpZ.Tf9l08p.X363kO21sOp.56O2s7/S6S/r1U5a0p.QpZ.Tf9l08', id 
+SELECT 'editor', 'editor@balingasag.gov.ph', '$2y$12$fxUjHbjCPB0Mo8zIZGFdTON223rUSFEu8zB4lPMmcStR5CB3NIfcS', id 
 FROM roles WHERE role_name = 'editor';
-

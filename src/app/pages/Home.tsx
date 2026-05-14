@@ -12,7 +12,7 @@ const categoryCards = [
     icon: Waves,
     path: '/tourist-spots',
     color: 'from-cyan-500 to-blue-600',
-    category: 'tourist_spot',
+    category: 'tourist-spot',
     image: 'https://images.unsplash.com/photo-1758782551916-1723a9cd00eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwdHJvcGljYWwlMjBiZWFjaCUyMGNvYXN0bGluZXxlbnwxfHx8fDE3Nzc5NjU4OTR8MA&ixlib=rb-4.1.0&q=80&w=1080'
   },
   {
@@ -46,7 +46,7 @@ const categoryCards = [
     description: 'Tips, transport & accommodation',
     icon: TreePine,
     path: '/travel-guide',
-    category: 'travel_guide',
+    category: 'travel-guide',
     color: 'from-lime-500 to-green-600',
     image: 'https://images.unsplash.com/photo-1739769234606-6ca9c9ecc925?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMG1vdW50YWluJTIwaGlraW5nJTIwbmF0dXJlJTIwdHJhaWx8ZW58MXx8fHwxNzc3OTY1ODk5fDA&ixlib=rb-4.1.0&q=80&w=1080'
   },
@@ -78,11 +78,11 @@ export function Home() {
       const response = await contentApi.getAll();
       if (response.success) {
         const allPages = response.data;
-        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published' && p.category === 'tourist_spot').slice(0, 3));
+        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published' && p.category === 'tourist-spot').slice(0, 3));
 
         // Calculate counts
         setStats({
-          spots: allPages.filter((p: any) => p.category === 'tourist_spot').length,
+          spots: allPages.filter((p: any) => p.category === 'tourist-spot').length,
           events: allPages.filter((p: any) => p.category === 'event').length,
           traditions: allPages.filter((p: any) => p.category === 'culture').length,
         });

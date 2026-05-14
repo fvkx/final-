@@ -17,7 +17,7 @@ export function TouristSpots() {
 
   const fetchSpots = async () => {
     try {
-      const response = await contentApi.getAll('tourist_spot');
+      const response = await contentApi.getAll('tourist-spot');
       if (response.success) {
         setSpots(response.data.filter((p: any) => p.status === 'published'));
       }

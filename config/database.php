@@ -2,7 +2,7 @@
 // config/database.php
 
 class Database {
-    private $host = "localhost";
+    private $host = "127.0.0.1";
     private $db_name = "balingasag_cms";
     private $username = "root";
     private $password = "";
@@ -14,7 +14,7 @@ class Database {
         try {
             // Secure connection using PDO with UTF-8 charset
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
+                "mysql:host=" . $this->host . ";port=3307;dbname=" . $this->db_name . ";charset=utf8mb4",
                 $this->username,
                 $this->password
             );

@@ -16,7 +16,7 @@ export function Places() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ name: '', category: 'tourist_spot', description: '', status: 'active' });
+  const [formData, setFormData] = useState({ name: '', category: 'tourist-spot', description: '', status: 'active' });
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const fetchPlaces = async () => {
@@ -60,7 +60,7 @@ export function Places() {
 
       await placesApi.create(data);
       setShowModal(false);
-      setFormData({ name: '', category: 'tourist_spot', description: '', status: 'active' });
+      setFormData({ name: '', category: 'tourist-spot', description: '', status: 'active' });
       setImageFile(null);
       fetchPlaces();
     } catch (error: any) {
@@ -158,7 +158,7 @@ export function Places() {
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   >
-                    <option value="tourist_spot">Tourist Spot</option>
+                    <option value="tourist-spot">Tourist Spot</option>
                     <option value="restaurant">Restaurant</option>
                     <option value="accommodation">Accommodation</option>
                     <option value="event">Event</option>

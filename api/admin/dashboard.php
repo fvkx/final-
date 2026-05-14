@@ -9,27 +9,32 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
     // Total Users
     $stmt = $db->query("SELECT COUNT(*) as total FROM users");
-    $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $totalUsers = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Total Pages (Modular Content)
+    // Total Content Pages
     $stmt = $db->query("SELECT COUNT(*) as total FROM content_pages");
-    $totalPages = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $totalPages = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
     // Total Inquiries
     $stmt = $db->query("SELECT COUNT(*) as total FROM inquiries");
-    $totalInquiries = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $totalInquiries = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Unread Inquiries
-    $stmt = $db->query("SELECT COUNT(*) as total FROM inquiries WHERE status = 'unread'");
-    $unreadInquiries = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    // Unread Inquiries — join to inquiry_statuses to find the 'unread' status id
+    $stmt = $db->query("
+        SELECT COUNT(*) as total
+        FROM inquiries i
+        JOIN inquiry_statuses s ON i.status_id = s.id
+        WHERE s.status_name = 'unread'
+    ");
+    $unreadInquiries = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
     echo json_encode([
         'success' => true,
         'data' => [
-            'totalUsers' => (int)$totalUsers,
-            'totalPages' => (int)$totalPages,
-            'totalInquiries' => (int)$totalInquiries,
-            'unreadInquiries' => (int)$unreadInquiries
+            'totalUsers'       => $totalUsers,
+            'totalPages'       => $totalPages,
+            'totalInquiries'   => $totalInquiries,
+            'unreadInquiries'  => $unreadInquiries,
         ]
     ]);
 }
