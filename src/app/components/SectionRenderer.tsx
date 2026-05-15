@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import { useState } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { CheckCircle2, X, ChevronLeft, ChevronRight } from 'lucide-react';
-=======
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { CheckCircle2 } from 'lucide-react';
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 
 interface SectionProps {
   section: {
@@ -16,7 +11,6 @@ interface SectionProps {
 
 export function SectionRenderer({ section }: SectionProps) {
   const { type, data } = section;
-<<<<<<< HEAD
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const images = data.images || [];
@@ -39,12 +33,6 @@ export function SectionRenderer({ section }: SectionProps) {
   switch (type) {
     case 'banner':
       content = (
-=======
-
-  switch (type) {
-    case 'banner':
-      return (
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
         <div className="relative h-[60vh] flex items-center justify-center text-white overflow-hidden">
           <div className="absolute inset-0 z-0">
             <ImageWithFallback
@@ -62,24 +50,17 @@ export function SectionRenderer({ section }: SectionProps) {
           </div>
         </div>
       );
-<<<<<<< HEAD
       break;
 
     case 'text':
     case 'rich_text':
       content = (
-=======
-
-    case 'rich_text':
-      return (
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
             {data.body}
           </div>
         </div>
       );
-<<<<<<< HEAD
       break;
 
     case 'gallery':
@@ -93,25 +74,11 @@ export function SectionRenderer({ section }: SectionProps) {
                   key={i} 
                   onClick={() => setSelectedImageIndex(i)}
                   className={`relative overflow-hidden rounded-2xl cursor-pointer group ${
-=======
-
-    case 'gallery':
-      const images = data.images || [];
-      if (data.layout === 'bento') {
-        return (
-          <div className="max-w-6xl mx-auto px-4 py-12">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[600px]">
-              {images.slice(0, 4).map((img: string, i: number) => (
-                <div 
-                  key={i} 
-                  className={`relative overflow-hidden rounded-2xl ${
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
                     i === 0 ? 'md:col-span-2 md:row-span-2' : 
                     i === 1 ? 'md:col-span-2 md:row-span-1' : 
                     'md:col-span-1 md:row-span-1'
                   }`}
                 >
-<<<<<<< HEAD
                   <ImageWithFallback src={img} alt="Gallery" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <div className="bg-white/20 backdrop-blur-md p-3 rounded-full shadow-lg">
@@ -139,36 +106,16 @@ export function SectionRenderer({ section }: SectionProps) {
                       <ChevronRight className="w-5 h-5 text-white" />
                     </div>
                   </div>
-=======
-                  <ImageWithFallback src={img} alt="Gallery" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
                 </div>
               ))}
             </div>
           </div>
         );
       }
-<<<<<<< HEAD
       break;
 
     case 'facts':
       content = (
-=======
-      return (
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((img: string, i: number) => (
-              <div key={i} className="aspect-square rounded-2xl overflow-hidden">
-                <ImageWithFallback src={img} alt="Gallery" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-    case 'facts':
-      return (
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="bg-emerald-50 rounded-3xl p-8 border border-emerald-100">
             <h3 className="text-2xl font-bold text-emerald-900 mb-6">{data.title}</h3>
@@ -183,7 +130,6 @@ export function SectionRenderer({ section }: SectionProps) {
           </div>
         </div>
       );
-<<<<<<< HEAD
       break;
 
     default:
@@ -244,10 +190,4 @@ export function SectionRenderer({ section }: SectionProps) {
       )}
     </>
   );
-=======
-
-    default:
-      return null;
-  }
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 }

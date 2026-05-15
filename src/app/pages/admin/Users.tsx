@@ -58,52 +58,56 @@ export function Users() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">User Management</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage admin portal access and roles</p>
+        </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
         >
           <UserPlus className="w-4 h-4" />
           <span>Add User</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b border-gray-100">
-            <tr>
-              <th className="px-6 py-4 font-semibold text-gray-600">Username</th>
-              <th className="px-6 py-4 font-semibold text-gray-600">Email</th>
-              <th className="px-6 py-4 font-semibold text-gray-600">Role</th>
-              <th className="px-6 py-4 font-semibold text-gray-600">Created At</th>
-              <th className="px-6 py-4 font-semibold text-gray-600 text-right">Actions</th>
+          <thead>
+            <tr className="border-b border-gray-50 bg-gray-50/30">
+              <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Username</th>
+              <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Email Address</th>
+              <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Role</th>
+              <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Joined Date</th>
+              <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-50">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-gray-900 font-medium">{user.username}</td>
-                <td className="px-6 py-4 text-gray-500">{user.email}</td>
+              <tr key={user.id} className="hover:bg-gray-50/50 transition-colors group">
+                <td className="px-6 py-4 text-gray-900 font-bold">{user.username}</td>
+                <td className="px-6 py-4 text-gray-500 text-sm">{user.email}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                    user.role === 'editor' ? 'bg-blue-100 text-blue-800' :
-                    'bg-gray-100 text-gray-800'
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    user.role === 'admin' ? 'bg-purple-50 text-purple-600' :
+                    user.role === 'editor' ? 'bg-blue-50 text-blue-600' :
+                    'bg-gray-100 text-gray-600'
                   }`}>
                     {user.role}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-500 text-sm">
-                  {new Date(user.created_at).toLocaleDateString()}
+                <td className="px-6 py-4 text-gray-400 text-xs font-medium">
+                  {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleDelete(user.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
+                    className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                    title="Delete user"
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
               </tr>

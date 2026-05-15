@@ -3,16 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Save, ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, 
   Image as ImageIcon, Type, LayoutGrid, ListChecks, 
-<<<<<<< HEAD
   Settings, Eye, Upload, X
 } from 'lucide-react';
 import { contentApi, mediaApi } from '../../lib/adminApi';
 import { SectionRenderer } from '../../components/SectionRenderer';
-=======
-  Settings, Eye, Upload
-} from 'lucide-react';
-import { contentApi, mediaApi } from '../../lib/adminApi';
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 
 const SECTION_TYPES = [
   { id: 'banner', name: 'Banner', icon: ImageIcon, description: 'Hero section with background image' },
@@ -36,10 +30,7 @@ export function PageEditor() {
     featured: false
   });
   const [sections, setSections] = useState<any[]>([]);
-<<<<<<< HEAD
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-=======
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 
   useEffect(() => {
     if (!isNew) {
@@ -160,7 +151,7 @@ export function PageEditor() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white px-6 py-2 rounded-lg flex items-center gap-2 font-semibold shadow-sm transition-all"
+            className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Changes'}
           </button>
@@ -178,16 +169,16 @@ export function PageEditor() {
                   <div className="p-1.5 bg-white rounded shadow-sm">
                     {(() => {
                       const Icon = SECTION_TYPES.find(t => t.id === section.type)?.icon || Type;
-                      return <Icon className="w-4 h-4 text-teal-600" />;
+                      return <Icon className="w-4 h-4 text-emerald-600" />;
                     })()}
                   </div>
                   <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{section.type}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-1 text-gray-400 hover:text-teal-600 disabled:opacity-30">
+                  <button onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
                     <ChevronUp className="w-4 h-4" />
                   </button>
-                  <button onClick={() => moveSection(idx, 'down')} disabled={idx === sections.length - 1} className="p-1 text-gray-400 hover:text-teal-600 disabled:opacity-30">
+                  <button onClick={() => moveSection(idx, 'down')} disabled={idx === sections.length - 1} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
                     <ChevronDown className="w-4 h-4" />
                   </button>
                   <button onClick={() => removeSection(idx)} className="p-1 text-gray-400 hover:text-red-600 ml-1">
@@ -248,11 +239,11 @@ export function PageEditor() {
                       <span className="font-semibold">Layout:</span>
                       <button 
                         onClick={() => updateSectionData(idx, { layout: 'grid' })}
-                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'grid' ? 'bg-teal-50 border-teal-200 text-teal-700' : 'border-gray-200 text-gray-500'}`}
+                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'grid' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
                       >Standard Grid</button>
                       <button 
                         onClick={() => updateSectionData(idx, { layout: 'bento' })}
-                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'bento' ? 'bg-teal-50 border-teal-200 text-teal-700' : 'border-gray-200 text-gray-500'}`}
+                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'bento' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
                       >Bento Layout</button>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -331,8 +322,8 @@ export function PageEditor() {
                     onClick={() => addSection(type.id)}
                     className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-100 rounded-xl hover:border-teal-500 hover:shadow-md transition-all group"
                   >
-                    <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-teal-50 transition-colors">
-                      <Icon className="w-6 h-6 text-gray-400 group-hover:text-teal-600" />
+                    <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-emerald-50 transition-colors">
+                      <Icon className="w-6 h-6 text-gray-400 group-hover:text-emerald-600" />
                     </div>
                     <span className="text-xs font-bold text-gray-700">{type.name}</span>
                   </button>
@@ -458,28 +449,23 @@ export function PageEditor() {
             </div>
           </div>
 
-          <div className="bg-teal-900 text-white rounded-2xl p-6 shadow-lg shadow-teal-900/20">
+          <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-lg shadow-emerald-900/20">
             <div className="flex items-center gap-2 mb-4">
-              <Eye className="w-4 h-4 text-teal-300" />
+              <Eye className="w-4 h-4 text-emerald-300" />
               <h3 className="font-bold">Live Preview</h3>
             </div>
-            <p className="text-teal-100 text-xs leading-relaxed mb-4">
+            <p className="text-emerald-100 text-xs leading-relaxed mb-4">
               Preview how your page will look to visitors once published. Ensure all images and text flows correctly.
             </p>
             <button 
-<<<<<<< HEAD
               onClick={() => setIsPreviewOpen(true)}
-=======
-              onClick={() => window.open(`/${page.slug}`, '_blank')}
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
-              className="w-full py-2 bg-teal-800 hover:bg-teal-700 rounded-lg text-sm font-bold transition-all border border-teal-700"
+              className="w-full py-2.5 bg-emerald-800 hover:bg-emerald-700 rounded-xl text-sm font-bold transition-all border border-emerald-700 shadow-sm"
             >
               Open Site Preview
             </button>
           </div>
         </div>
       </div>
-<<<<<<< HEAD
 
       {/* Live Preview Modal */}
       {isPreviewOpen && (
@@ -511,8 +497,6 @@ export function PageEditor() {
           </div>
         </div>
       )}
-=======
->>>>>>> 710969a219f4fce336f23b33391cb672357c859d
     </div>
   );
 }
