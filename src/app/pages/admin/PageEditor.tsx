@@ -3,10 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Save, ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, 
   Image as ImageIcon, Type, LayoutGrid, ListChecks, 
+<<<<<<< HEAD
   Settings, Eye, Upload, X
 } from 'lucide-react';
 import { contentApi, mediaApi } from '../../lib/adminApi';
 import { SectionRenderer } from '../../components/SectionRenderer';
+=======
+  Settings, Eye, Upload
+} from 'lucide-react';
+import { contentApi, mediaApi } from '../../lib/adminApi';
+>>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 
 const SECTION_TYPES = [
   { id: 'banner', name: 'Banner', icon: ImageIcon, description: 'Hero section with background image' },
@@ -30,7 +36,10 @@ export function PageEditor() {
     featured: false
   });
   const [sections, setSections] = useState<any[]>([]);
+<<<<<<< HEAD
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+=======
+>>>>>>> 710969a219f4fce336f23b33391cb672357c859d
 
   useEffect(() => {
     if (!isNew) {
@@ -458,7 +467,11 @@ export function PageEditor() {
               Preview how your page will look to visitors once published. Ensure all images and text flows correctly.
             </p>
             <button 
+<<<<<<< HEAD
               onClick={() => setIsPreviewOpen(true)}
+=======
+              onClick={() => window.open(`/${page.slug}`, '_blank')}
+>>>>>>> 710969a219f4fce336f23b33391cb672357c859d
               className="w-full py-2 bg-teal-800 hover:bg-teal-700 rounded-lg text-sm font-bold transition-all border border-teal-700"
             >
               Open Site Preview
@@ -466,6 +479,7 @@ export function PageEditor() {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 
       {/* Live Preview Modal */}
       {isPreviewOpen && (
@@ -497,6 +511,8 @@ export function PageEditor() {
           </div>
         </div>
       )}
+=======
+>>>>>>> 710969a219f4fce336f23b33391cb672357c859d
     </div>
   );
 }
