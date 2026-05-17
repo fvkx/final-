@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Globe, FileText, Layout, ChevronRight, Search, Filter } from 'lucide-react';
 import { contentApi } from '../../lib/adminApi';
 import { Link } from 'react-router-dom';
+import { AdminSkeletonList } from '../../components/SkeletonCard';
 
 const categories = [
   { id: 'tourist-spot', name: 'Tourist Spots', icon: Globe, color: 'text-emerald-600 bg-emerald-50' },
@@ -98,7 +99,7 @@ export function ContentManager() {
       {/* Page List */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400">Loading pages...</div>
+          <AdminSkeletonList count={5} />
         ) : filteredPages.length === 0 ? (
           <div className="p-12 text-center text-gray-400">No pages found matching your filters.</div>
         ) : (

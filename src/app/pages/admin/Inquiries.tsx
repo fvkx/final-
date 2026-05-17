@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { inquiriesApi } from '../../lib/adminApi';
 import { Trash2, CheckCircle, MailOpen, Eye } from 'lucide-react';
+import { AdminSkeletonList } from '../../components/SkeletonCard';
 
 interface Inquiry {
   id: number;
@@ -65,8 +66,6 @@ export function Inquiries() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -103,7 +102,13 @@ export function Inquiries() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {inquiries.map((inquiry) => (
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="p-0">
+                  <AdminSkeletonList count={5} />
+                </td>
+              </tr>
+            ) : inquiries.map((inquiry) => (
               <tr key={inquiry.id} className={`hover:bg-gray-50/50 transition-colors group ${inquiry.status === 'unread' ? 'bg-emerald-50/20' : ''}`}>
                 <td className="px-6 py-4">
                   <div className="font-bold text-gray-900">{inquiry.full_name}</div>

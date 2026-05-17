@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { usersApi } from '../../lib/adminApi';
 import { Trash2, UserPlus } from 'lucide-react';
+import { AdminSkeletonList } from '../../components/SkeletonCard';
 
 interface User {
   id: number;
@@ -56,8 +57,6 @@ export function Users() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
@@ -86,7 +85,13 @@ export function Users() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {users.map((user) => (
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="p-0">
+                  <AdminSkeletonList count={3} />
+                </td>
+              </tr>
+            ) : users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50/50 transition-colors group">
                 <td className="px-6 py-4 text-gray-900 font-bold">{user.username}</td>
                 <td className="px-6 py-4 text-gray-500 text-sm">{user.email}</td>
