@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, Mail, Bell, FileText } from 'lucide-react';
+import { Users, Mail, Bell, FileText, ExternalLink } from 'lucide-react';
 import { dashboardApi } from '../../lib/adminApi';
 
 interface DashboardStats {
@@ -40,9 +40,20 @@ export function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">Welcome back, here's what's happening with your site.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
+          <p className="text-gray-500 text-sm mt-1">Welcome back, here's what's happening with your site.</p>
+        </div>
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm shadow-emerald-600/10 hover:scale-[1.02] active:scale-[0.99]"
+        >
+          <span>View Main Site</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
