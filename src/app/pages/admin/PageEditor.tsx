@@ -30,11 +30,7 @@ export function PageEditor() {
     featured: false
   });
   const [sections, setSections] = useState<any[]>([]);
-<<<<<<< HEAD
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-=======
   const [showPreview, setShowPreview] = useState(false);
->>>>>>> 8d2200f (improve admin content system)
 
   useEffect(() => {
     if (!isNew) {
@@ -462,13 +458,8 @@ export function PageEditor() {
               Preview how your page will look to visitors once published. Ensure all images and text flows correctly.
             </p>
             <button 
-<<<<<<< HEAD
-              onClick={() => setIsPreviewOpen(true)}
-              className="w-full py-2.5 bg-emerald-800 hover:bg-emerald-700 rounded-xl text-sm font-bold transition-all border border-emerald-700 shadow-sm"
-=======
               onClick={() => setShowPreview(true)}
-              className="w-full py-2 bg-teal-800 hover:bg-teal-700 rounded-lg text-sm font-bold transition-all border border-teal-700 flex items-center justify-center gap-2"
->>>>>>> 8d2200f (improve admin content system)
+              className="w-full py-2.5 bg-emerald-800 hover:bg-emerald-700 rounded-xl text-sm font-bold transition-all border border-emerald-700 shadow-sm flex items-center justify-center gap-2"
             >
               <Eye className="w-4 h-4" />
               Live Modal Preview
@@ -477,17 +468,16 @@ export function PageEditor() {
         </div>
       </div>
 
-<<<<<<< HEAD
       {/* Live Preview Modal */}
-      {isPreviewOpen && (
+      {showPreview && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
-            onClick={() => setIsPreviewOpen(false)} 
+            onClick={() => setShowPreview(false)} 
           />
           <div className="relative bg-white w-full max-w-5xl max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-300">
             <button
-              onClick={() => setIsPreviewOpen(false)}
+              onClick={() => setShowPreview(false)}
               className="absolute top-6 right-6 z-50 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full backdrop-blur-md transition-all"
             >
               <X className="w-6 h-6" />
@@ -504,50 +494,10 @@ export function PageEditor() {
                   </div>
                 )}
               </div>
-=======
-      {/* Preview Modal */}
-      {showPreview && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
-            onClick={() => setShowPreview(false)} 
-          />
-          
-          <div className="relative bg-white w-full max-w-6xl max-h-[95vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-300">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50/50">
-              <div className="flex items-center gap-2">
-                <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Live Preview</span>
-                <h2 className="font-bold text-gray-900">{page.title || 'Untitled Page'}</h2>
-              </div>
-              <button
-                onClick={() => setShowPreview(false)}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
-
-            {/* Modal Body (Scrollable) */}
-            <div className="overflow-y-auto flex-1 bg-white">
-              {sections.length > 0 ? (
-                <div className="pb-20">
-                  {sections.map((section, idx) => (
-                    <SectionRenderer key={idx} section={section} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-40 text-gray-400">
-                  <ImageIcon className="w-12 h-12 mb-4 opacity-20" />
-                  <p>Add some sections to see the preview</p>
-                </div>
-              )}
-            </div>
-            
-            {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 border-t flex justify-center">
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Instantly previewing current editor state</p>
->>>>>>> 8d2200f (improve admin content system)
+          </div>
+        </div>
+      )}
             </div>
           </div>
         </div>
