@@ -11,11 +11,14 @@ interface User {
   created_at: string;
 }
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'viewer' });
+  const { confirm, toast } = useNotifications();
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -34,12 +37,17 @@ export function Users() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this user?')) {
+    const confirmed = await confirm(
+      'Delete User',
+      'Are you sure you want to delete this CMS user? They will lose access immediately.'
+    );
+    if (confirmed) {
       try {
         await usersApi.delete(id);
+        toast('User deleted successfully!', 'success');
         fetchUsers();
       } catch {
-        alert('Failed to delete user');
+        toast('Failed to delete user', 'error');
       }
     }
   };
@@ -48,12 +56,13 @@ export function Users() {
     e.preventDefault();
     try {
       await usersApi.create(formData);
+      toast('User created successfully!', 'success');
       setShowModal(false);
       setFormData({ username: '', email: '', password: '', role: 'viewer' });
       fetchUsers();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create user';
-      alert(message);
+      toast(message, 'error');
     }
   };
 

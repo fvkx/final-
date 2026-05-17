@@ -15,10 +15,13 @@ const SECTION_TYPES = [
   { id: 'facts', name: 'Facts/List', icon: ListChecks, description: 'Highlights or key information' },
 ];
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export function PageEditor() {
   const { id } = useParams();
   const isNew = id === 'new';
   const navigate = useNavigate();
+  const { toast } = useNotifications();
   
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -107,7 +110,7 @@ export function PageEditor() {
 
   const handleSave = async () => {
     if (!page.title.trim() || !page.slug.trim()) {
-      alert('Please provide both a title and a unique slug for the page.');
+      toast('Please provide both a title and a unique slug for the page.', 'error');
       return;
     }
 
@@ -119,14 +122,14 @@ export function PageEditor() {
         const newId = pageRes.id;
         // 2. Save Sections
         await contentApi.saveSections(newId, sections);
-        alert(isNew ? 'Page created successfully!' : 'Page saved successfully!');
+        toast(isNew ? 'Page created successfully!' : 'Page saved successfully!', 'success');
         navigate('/admin/content');
       } else {
-        alert('Error saving page: ' + (pageRes.message || 'Unknown error'));
+        toast('Error saving page: ' + (pageRes.message || 'Unknown error'), 'error');
       }
     } catch (error: any) {
       console.error('Failed to save:', error);
-      alert('Failed to save page: ' + (error.message || 'Server error'));
+      toast('Failed to save page: ' + (error.message || 'Server error'), 'error');
     } finally {
       setSaving(false);
     }

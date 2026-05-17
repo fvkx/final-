@@ -11,11 +11,14 @@ const categories = [
   { id: 'travel-guide', name: 'Travel Guide', icon: FileText, color: 'text-blue-600 bg-blue-50' },
 ];
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export function ContentManager() {
   const [pages, setPages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const { confirm, toast } = useNotifications();
 
   useEffect(() => {
     fetchPages();
@@ -35,13 +38,19 @@ export function ContentManager() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this page?')) return;
+    const confirmed = await confirm(
+      'Delete Page',
+      'Are you sure you want to delete this page? This action cannot be undone.'
+    );
+    if (!confirmed) return;
     try {
       const response = await contentApi.delete(id);
       if (response.success) {
         setPages(pages.filter(p => p.id !== id));
+        toast('Page deleted successfully!', 'success');
       }
     } catch (error) {
+      toast('Failed to delete page', 'error');
       console.error('Failed to delete page:', error);
     }
   };

@@ -13,12 +13,15 @@ interface Place {
   status: string;
 }
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export function Places() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ name: '', category: 'tourist-spot', description: '', status: 'active' });
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const { confirm, toast } = useNotifications();
 
   const fetchPlaces = async () => {
     setLoading(true);
@@ -37,12 +40,17 @@ export function Places() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this place?')) {
+    const confirmed = await confirm(
+      'Delete Place',
+      'Are you sure you want to delete this tourist place? This action cannot be undone.'
+    );
+    if (confirmed) {
       try {
         await placesApi.delete(id);
+        toast('Place deleted successfully!', 'success');
         fetchPlaces();
       } catch (error) {
-        alert('Failed to delete place');
+        toast('Failed to delete place', 'error');
       }
     }
   };
@@ -60,12 +68,13 @@ export function Places() {
       }
 
       await placesApi.create(data);
+      toast('Place created successfully!', 'success');
       setShowModal(false);
       setFormData({ name: '', category: 'tourist-spot', description: '', status: 'active' });
       setImageFile(null);
       fetchPlaces();
     } catch (error: any) {
-      alert(error.message || 'Failed to create place');
+      toast(error.message || 'Failed to create place', 'error');
     }
   };
 

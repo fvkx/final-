@@ -13,11 +13,14 @@ interface Inquiry {
   date_submitted: string;
 }
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export function Inquiries() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [filter, setFilter] = useState('all');
+  const { confirm, toast } = useNotifications();
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
@@ -38,23 +41,29 @@ export function Inquiries() {
   const handleStatusChange = async (id: number, status: string) => {
     try {
       await inquiriesApi.updateStatus(id, status);
+      toast(`Inquiry marked as ${status}!`, 'success');
       fetchInquiries();
       if (selectedInquiry && selectedInquiry.id === id) {
         setSelectedInquiry({ ...selectedInquiry, status });
       }
     } catch {
-      alert('Failed to update status');
+      toast('Failed to update status', 'error');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this inquiry?')) {
+    const confirmed = await confirm(
+      'Delete Inquiry',
+      'Are you sure you want to delete this inquiry? This action cannot be undone.'
+    );
+    if (confirmed) {
       try {
         await inquiriesApi.delete(id);
         if (selectedInquiry?.id === id) setSelectedInquiry(null);
+        toast('Inquiry deleted successfully!', 'success');
         fetchInquiries();
       } catch {
-        alert('Failed to delete inquiry');
+        toast('Failed to delete inquiry', 'error');
       }
     }
   };
