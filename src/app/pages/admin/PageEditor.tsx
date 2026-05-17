@@ -498,10 +498,6 @@ export function PageEditor() {
           </div>
         </div>
       )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
