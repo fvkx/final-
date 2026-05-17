@@ -1,8 +1,7 @@
 <?php
 /**
  * places.php — proxy to content_pages for tourist spot entries.
- * The normalized schema uses content_pages + categories instead of a
- * separate 'places' table, so this endpoint wraps those tables.
+ * Supports both normalized and flat schemas dynamically.
  */
 require_once 'config.php';
 require_once 'auth.php';
@@ -18,34 +17,65 @@ if ($method !== 'GET') {
     }
 }
 
-// Resolve 'tourist-spot' category id once
-function getTouristSpotCategoryId($db) {
-    $stmt = $db->prepare("SELECT id FROM categories WHERE slug = 'tourist-spot'");
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ? (int)$row['id'] : null;
+// Detect schema at runtime
+$pagesColumns = [];
+$stmt = $db->query("SHOW COLUMNS FROM `content_pages`");
+if ($stmt) {
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $pagesColumns[] = $row['Field'];
+    }
 }
+$useNormalizedPages = in_array('category_id', $pagesColumns) && in_array('status_id', $pagesColumns);
 
 switch ($method) {
     case 'GET':
-        $catId = getTouristSpotCategoryId($db);
-        if (!$catId) {
-            echo json_encode(['success' => true, 'data' => []]);
-            break;
+        if ($useNormalizedPages) {
+            // Normal 3NF behavior
+            $stmt = $db->prepare("SELECT id FROM categories WHERE slug = 'tourist-spot'");
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $catId = $row ? (int)$row['id'] : null;
+
+            if (!$catId) {
+                echo json_encode(['success' => true, 'data' => []]);
+                break;
+            }
+
+            $stmt = $db->prepare("
+                SELECT cp.id, cp.title as name, cp.slug, cp.image_url,
+                       cp.featured, cp.created_at,
+                       cs.status_name as status,
+                       c.name as category
+                FROM content_pages cp
+                JOIN content_statuses cs ON cp.status_id   = cs.id
+                JOIN categories c        ON cp.category_id = c.id
+                WHERE cp.category_id = :category_id
+                ORDER BY cp.id DESC
+            ");
+            $stmt->execute([':category_id' => $catId]);
+            $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            // Flat schema behavior
+            $stmt = $db->prepare("
+                SELECT cp.id, cp.title as name, cp.slug, cp.image_url,
+                       cp.featured, cp.created_at,
+                       cp.status as status,
+                       cp.category as category
+                FROM content_pages cp
+                WHERE cp.category = 'tourist_spot'
+                ORDER BY cp.id DESC
+            ");
+            $stmt->execute();
+            $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        $stmt = $db->prepare("
-            SELECT cp.id, cp.title as name, cp.slug, cp.image_url,
-                   cp.featured, cp.created_at,
-                   cs.status_name as status,
-                   c.name as category
-            FROM content_pages cp
-            JOIN content_statuses cs ON cp.status_id   = cs.id
-            JOIN categories c        ON cp.category_id = c.id
-            WHERE cp.category_id = :category_id
-            ORDER BY cp.id DESC
-        ");
-        $stmt->execute([':category_id' => $catId]);
-        $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($places as &$place) {
+            if (isset($place['category'])) {
+                $place['category'] = str_replace('_', '-', $place['category']);
+            }
+            $place['featured'] = isset($place['featured']) ? (bool)$place['featured'] : false;
+        }
+
         echo json_encode(['success' => true, 'data' => $places]);
         break;
 
@@ -61,18 +91,6 @@ switch ($method) {
             echo json_encode(['success' => false, 'message' => 'Name is required']);
             exit;
         }
-
-        $catId = getTouristSpotCategoryId($db);
-        if (!$catId) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Tourist-spot category not found in DB']);
-            exit;
-        }
-
-        // Resolve status_id
-        $statStmt = $db->prepare("SELECT id FROM content_statuses WHERE status_name = :name");
-        $statStmt->execute([':name' => in_array($status, ['published','draft','archived']) ? $status : 'draft']);
-        $stat = $statStmt->fetch(PDO::FETCH_ASSOC);
 
         // Handle optional image upload
         $imageUrl = null;
@@ -105,17 +123,47 @@ switch ($method) {
                 $slug = $base . '-' . $i++;
             }
 
-            $stmt = $db->prepare("
-                INSERT INTO content_pages (title, slug, image_url, category_id, status_id)
-                VALUES (:title, :slug, :image_url, :category_id, :status_id)
-            ");
-            $stmt->execute([
-                ':title'       => $name,
-                ':slug'        => $slug,
-                ':image_url'   => $imageUrl,
-                ':category_id' => $catId,
-                ':status_id'   => $stat['id'],
-            ]);
+            if ($useNormalizedPages) {
+                $stmt = $db->prepare("SELECT id FROM categories WHERE slug = 'tourist-spot'");
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $catId = $row ? (int)$row['id'] : null;
+
+                if (!$catId) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Tourist-spot category not found in DB']);
+                    exit;
+                }
+
+                // Resolve status_id
+                $statStmt = $db->prepare("SELECT id FROM content_statuses WHERE status_name = :name");
+                $statStmt->execute([':name' => in_array($status, ['published','draft','archived']) ? $status : 'draft']);
+                $stat = $statStmt->fetch(PDO::FETCH_ASSOC);
+
+                $stmt = $db->prepare("
+                    INSERT INTO content_pages (title, slug, image_url, category_id, status_id)
+                    VALUES (:title, :slug, :image_url, :category_id, :status_id)
+                ");
+                $stmt->execute([
+                    ':title'       => $name,
+                    ':slug'        => $slug,
+                    ':image_url'   => $imageUrl,
+                    ':category_id' => $catId,
+                    ':status_id'   => $stat['id'],
+                ]);
+            } else {
+                // Flat schema behavior
+                $stmt = $db->prepare("
+                    INSERT INTO content_pages (title, slug, image_url, category, status)
+                    VALUES (:title, :slug, :image_url, 'tourist_spot', :status)
+                ");
+                $stmt->execute([
+                    ':title'     => $name,
+                    ':slug'      => $slug,
+                    ':image_url' => $imageUrl,
+                    ':status'    => in_array($status, ['published','draft','archived']) ? $status : 'draft',
+                ]);
+            }
             echo json_encode(['success' => true, 'message' => 'Place created successfully']);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -136,7 +184,7 @@ switch ($method) {
         $row = $sel->fetch(PDO::FETCH_ASSOC);
         if ($row && $row['image_url']) {
             $filePath = '../../public' . $row['image_url'];
-            if (file_exists($filePath)) unlink($filePath);
+            if (file_exists($filePath)) @unlink($filePath);
         }
         $stmt = $db->prepare("DELETE FROM content_pages WHERE id = :id");
         $stmt->execute([':id' => $id]);
