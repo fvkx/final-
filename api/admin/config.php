@@ -21,7 +21,7 @@ $user = 'root'; // Update with your MySQL user
 $pass = '';     // Update with your MySQL password
 
 try {
-    $db = new PDO("mysql:host=$host;port=3307;dbname=$dbname;charset=utf8", $user, $pass);
+    $db = new PDO("mysql:host=$host;port=3306;dbname=$dbname;charset=utf8", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'config.php';
 require_once 'auth.php';
 
@@ -14,8 +14,6 @@ if ($method !== 'GET') {
     }
 }
 
-<<<<<<< HEAD
-=======
 function tableExists($name)
 {
     global $db;
@@ -263,30 +261,10 @@ try {
     // ignore migration failures and continue
 }
 
->>>>>>> 8d2200f (improve admin content system)
 switch ($method) {
     // ─── GET ─────────────────────────────────────────────────────────────────
     case 'GET':
         if (isset($_GET['id'])) {
-<<<<<<< HEAD
-            // Single page with its sections
-            $id   = (int)$_GET['id'];
-            $stmt = $db->prepare("
-                SELECT cp.id, cp.title, cp.slug, cp.image_url, cp.featured,
-                       cp.created_at, cp.updated_at,
-                       c.slug as category,
-                       c.name as category_name,
-                       cs.status_name as status
-                FROM content_pages cp
-                JOIN categories c        ON cp.category_id = c.id
-                JOIN content_statuses cs ON cp.status_id   = cs.id
-                WHERE cp.id = :id
-            ");
-            $stmt->execute([':id' => $id]);
-            $page = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$page) {
-=======
             $stmt = $db->prepare("SELECT cp.*"
                 . ($useNormalizedPages && $hasCategoryTable ? ", c.slug AS category_slug" : "")
                 . ($useNormalizedPages && $hasStatusTable ? ", s.status_name AS status_name" : "")
@@ -309,49 +287,11 @@ switch ($method) {
                 $page['sections'] = $sections;
                 echo json_encode(['success' => true, 'data' => annotatePage($page)]);
             } else {
->>>>>>> 8d2200f (improve admin content system)
                 http_response_code(404);
                 echo json_encode(['success' => false, 'message' => 'Page not found']);
-                break;
             }
-
-            $secStmt = $db->prepare("
-                SELECT cs.id, cs.sort_order, cs.section_data as data,
-                       st.type_name as type
-                FROM content_sections cs
-                JOIN section_types st ON cs.type_id = st.id
-                WHERE cs.page_id = :page_id
-                ORDER BY cs.sort_order ASC
-            ");
-            $secStmt->execute([':page_id' => $id]);
-            $sections = $secStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($sections as &$section) {
-                $section['data'] = json_decode($section['data'], true);
-            }
-            $page['sections'] = $sections;
-            echo json_encode(['success' => true, 'data' => $page]);
 
         } elseif (isset($_GET['slug'])) {
-<<<<<<< HEAD
-            // Public: single published page by slug
-            $slug = $_GET['slug'];
-            $stmt = $db->prepare("
-                SELECT cp.id, cp.title, cp.slug, cp.image_url, cp.featured,
-                       cp.created_at, cp.updated_at,
-                       c.slug as category,
-                       c.name as category_name,
-                       cs.status_name as status
-                FROM content_pages cp
-                JOIN categories c        ON cp.category_id = c.id
-                JOIN content_statuses cs ON cp.status_id   = cs.id
-                WHERE cp.slug = :slug AND cs.status_name = 'published'
-            ");
-            $stmt->execute([':slug' => $slug]);
-            $page = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$page) {
-=======
             $slug = $_GET['slug'];
             $preview = isset($_GET['preview']) && $_GET['preview'] == '1';
             $statusClause = '';
@@ -386,50 +326,11 @@ switch ($method) {
                 $page['sections'] = $sections;
                 echo json_encode(['success' => true, 'data' => annotatePage($page)]);
             } else {
->>>>>>> 8d2200f (improve admin content system)
                 http_response_code(404);
                 echo json_encode(['success' => false, 'message' => 'Page not found']);
-                break;
             }
-
-            $secStmt = $db->prepare("
-                SELECT cs.id, cs.sort_order, cs.section_data as data,
-                       st.type_name as type
-                FROM content_sections cs
-                JOIN section_types st ON cs.type_id = st.id
-                WHERE cs.page_id = :page_id
-                ORDER BY cs.sort_order ASC
-            ");
-            $secStmt->execute([':page_id' => $page['id']]);
-            $sections = $secStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($sections as &$section) {
-                $section['data'] = json_decode($section['data'], true);
-            }
-            $page['sections'] = $sections;
-            echo json_encode(['success' => true, 'data' => $page]);
 
         } else {
-<<<<<<< HEAD
-            // List all pages (optionally filtered by category slug)
-            $categorySlug = $_GET['category'] ?? null;
-            $sql = "
-                SELECT cp.id, cp.title, cp.slug, cp.image_url, cp.featured,
-                       cp.created_at, cp.updated_at,
-                       c.name as category, c.slug as category_slug,
-                       cs.status_name as status
-                FROM content_pages cp
-                JOIN categories c        ON cp.category_id = c.id
-                JOIN content_statuses cs ON cp.status_id   = cs.id
-            ";
-            $params = [];
-            if ($categorySlug) {
-                $sql .= " WHERE c.slug = :category_slug";
-                $params[':category_slug'] = $categorySlug;
-            }
-            $sql .= " ORDER BY cp.created_at DESC";
-            $stmt = $db->prepare($sql);
-=======
             $category = $_GET['category'] ?? null;
             $where = '';
             $params = [];
@@ -453,7 +354,6 @@ switch ($method) {
                 . ($useNormalizedPages && $hasStatusTable ? " LEFT JOIN content_statuses s ON cp.status_id = s.id" : "")
                 . $where
                 . " ORDER BY cp.created_at DESC");
->>>>>>> 8d2200f (improve admin content system)
             $stmt->execute($params);
 
             $pages = [];
@@ -471,37 +371,18 @@ switch ($method) {
             $input = json_decode(file_get_contents('php://input'), true);
 
             if (isset($input['action']) && $input['action'] === 'save_page') {
-                $id        = $input['id']        ?? null;
-                $title     = $input['title']     ?? '';
-                $slug      = $input['slug']      ?? '';
-                $imageUrl  = $input['image_url'] ?? null;
-                $featured  = (int)($input['featured'] ?? 0);
-                $catSlug   = $input['category']  ?? 'tourist-spot';
-                $statusName = $input['status']   ?? 'draft';
+                $id          = $input['id']          ?? null;
+                $title       = $input['title']       ?? '';
+                $slug        = $input['slug']        ?? '';
+                $imageUrl    = $input['image_url']   ?? null;
+                $description = $input['description'] ?? null;
+                $featured    = (int)($input['featured'] ?? 0);
+                $category    = $input['category']    ?? 'tourist-spot';
+                $status      = $input['status']      ?? 'draft';
 
                 if (!$title || !$slug) {
                     http_response_code(400);
                     echo json_encode(['success' => false, 'message' => 'Title and slug are required']);
-                    exit;
-                }
-
-                // Resolve category_id
-                $catStmt = $db->prepare("SELECT id FROM categories WHERE slug = :slug");
-                $catStmt->execute([':slug' => $catSlug]);
-                $cat = $catStmt->fetch(PDO::FETCH_ASSOC);
-                if (!$cat) {
-                    http_response_code(400);
-                    echo json_encode(['success' => false, 'message' => "Unknown category: $catSlug"]);
-                    exit;
-                }
-
-                // Resolve status_id
-                $statStmt = $db->prepare("SELECT id FROM content_statuses WHERE status_name = :name");
-                $statStmt->execute([':name' => $statusName]);
-                $stat = $statStmt->fetch(PDO::FETCH_ASSOC);
-                if (!$stat) {
-                    http_response_code(400);
-                    echo json_encode(['success' => false, 'message' => "Unknown status: $statusName"]);
                     exit;
                 }
 
@@ -512,18 +393,24 @@ switch ($method) {
                 $fields = [
                     'title' => ':title',
                     'slug' => ':slug',
-                    'description' => ':description',
-                    'image_url' => ':image_url',
                     'featured' => ':featured'
                 ];
 
                 $bindings = [
                     ':title' => $title,
                     ':slug' => $slug,
-                    ':description' => $description,
-                    ':image_url' => $image_url,
                     ':featured' => (int)$featured
                 ];
+
+                if ($pagesHasDescription) {
+                    $fields['description'] = ':description';
+                    $bindings[':description'] = $description;
+                }
+
+                if ($pagesHasImageUrl) {
+                    $fields['image_url'] = ':image_url';
+                    $bindings[':image_url'] = $imageUrl;
+                }
 
                 if ($pagesHasCategory) {
                     $fields['category'] = ':category';
@@ -546,23 +433,14 @@ switch ($method) {
                 }
 
                 if ($id) {
-<<<<<<< HEAD
-                    // Update existing page
-                    $stmt = $db->prepare("
-                        UPDATE content_pages
-                        SET title = :title, slug = :slug, image_url = :image_url,
-                            featured = :featured, category_id = :category_id, status_id = :status_id
-                        WHERE id = :id
-                    ");
-                    $stmt->execute([
-                        ':title'       => $title,
-                        ':slug'        => $slug,
-                        ':image_url'   => $imageUrl,
-                        ':featured'    => $featured,
-                        ':category_id' => $cat['id'],
-                        ':status_id'   => $stat['id'],
-                        ':id'          => $id,
-                    ]);
+                    $setFragments = [];
+                    foreach ($fields as $column => $placeholder) {
+                        $setFragments[] = "$column = $placeholder";
+                    }
+                    $query = "UPDATE content_pages SET " . implode(', ', $setFragments) . " WHERE id = :id";
+                    $bindings[':id'] = $id;
+                    $stmt = $db->prepare($query);
+                    $stmt->execute($bindings);
                     $pageId = $id;
                 } else {
                     // Check for duplicate slug
@@ -574,39 +452,15 @@ switch ($method) {
                         exit;
                     }
 
-                    $stmt = $db->prepare("
-                        INSERT INTO content_pages (title, slug, image_url, featured, category_id, status_id)
-                        VALUES (:title, :slug, :image_url, :featured, :category_id, :status_id)
-                    ");
-                    $stmt->execute([
-                        ':title'       => $title,
-                        ':slug'        => $slug,
-                        ':image_url'   => $imageUrl,
-                        ':featured'    => $featured,
-                        ':category_id' => $cat['id'],
-                        ':status_id'   => $stat['id'],
-                    ]);
-=======
-                    $setFragments = [];
-                    foreach ($fields as $column => $placeholder) {
-                        $setFragments[] = "$column = $placeholder";
-                    }
-                    $query = "UPDATE content_pages SET " . implode(', ', $setFragments) . " WHERE id = :id";
-                    $bindings[':id'] = $id;
-                    $stmt = $db->prepare($query);
-                    $stmt->execute($bindings);
-                    $pageId = $id;
-                } else {
                     $columns = array_keys($fields);
                     $placeholders = array_values($fields);
                     $query = "INSERT INTO content_pages (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
                     $stmt = $db->prepare($query);
                     $stmt->execute($bindings);
->>>>>>> 8d2200f (improve admin content system)
                     $pageId = $db->lastInsertId();
                 }
 
-                echo json_encode(['success' => true, 'id' => $pageId]);
+                echo json_encode(['success' => true, 'id' => (int)$pageId]);
 
             } elseif (isset($input['action']) && $input['action'] === 'save_sections') {
                 $pageId   = $input['page_id'] ?? null;
@@ -618,34 +472,6 @@ switch ($method) {
                     exit;
                 }
 
-<<<<<<< HEAD
-                // Delete existing sections and re-insert
-                $db->prepare("DELETE FROM content_sections WHERE page_id = :page_id")
-                   ->execute([':page_id' => $pageId]);
-
-                $stmt = $db->prepare("
-                    INSERT INTO content_sections (page_id, type_id, section_data, sort_order)
-                    VALUES (:page_id, :type_id, :section_data, :sort_order)
-                ");
-
-                foreach ($sections as $index => $section) {
-                    // Resolve type_id from section_types
-                    $typeStmt = $db->prepare("SELECT id FROM section_types WHERE type_name = :name");
-                    $typeStmt->execute([':name' => $section['type']]);
-                    $typeRow = $typeStmt->fetch(PDO::FETCH_ASSOC);
-
-                    if (!$typeRow) {
-                        // Skip unknown section types gracefully
-                        continue;
-                    }
-
-                    $stmt->execute([
-                        ':page_id'      => $pageId,
-                        ':type_id'      => $typeRow['id'],
-                        ':section_data' => json_encode($section['data']),
-                        ':sort_order'   => $index,
-                    ]);
-=======
                 $db->prepare("DELETE FROM content_sections WHERE page_id = :page_id")->execute([':page_id' => $pageId]);
 
                 $insertColumns = ['page_id'];
@@ -694,7 +520,6 @@ switch ($method) {
                     }
 
                     $stmt->execute($bindings);
->>>>>>> 8d2200f (improve admin content system)
                 }
 
                 echo json_encode(['success' => true, 'message' => 'Sections saved successfully']);

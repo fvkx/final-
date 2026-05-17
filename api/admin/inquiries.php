@@ -2,30 +2,18 @@
 require_once 'config.php';
 require_once 'auth.php';
 
-<<<<<<< HEAD
-// Verify authentication for all admin endpoints
-$user = verifyToken();
-=======
->>>>>>> 8d2200f (improve admin content system)
+
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-<<<<<<< HEAD
+        $user = verifyToken();
         $statusFilter = $_GET['status'] ?? 'all';
         $search       = $_GET['search'] ?? '';
         $page         = (int)($_GET['page'] ?? 1);
         $pageSize     = 10;
         $offset       = ($page - 1) * $pageSize;
-=======
-        $user = verifyToken();
-        $status = $_GET['status'] ?? 'all';
-        $search = $_GET['search'] ?? '';
-        $page = (int)($_GET['page'] ?? 1);
-        $pageSize = 10;
-        $offset = ($page - 1) * $pageSize;
->>>>>>> 8d2200f (improve admin content system)
 
         // Build the base query joining inquiry_statuses to expose the status name
         $sql = "
@@ -127,18 +115,10 @@ switch ($method) {
         break;
 
     case 'PATCH':
-<<<<<<< HEAD
+        $user = verifyToken();
         $input     = json_decode(file_get_contents('php://input'), true);
         $id        = isset($input['id']) ? (int)$input['id'] : (int)($_GET['id'] ?? 0);
         $statusName = $input['status'] ?? '';
-=======
-        $user = verifyToken();
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        // Handle ID from path /api/admin/inquiries.php?id=123 if not in body
-        $id = isset($input['id']) ? (int)$input['id'] : (isset($_GET['id']) ? (int)$_GET['id'] : 0);
-        $status = $input['status'] ?? '';
->>>>>>> 8d2200f (improve admin content system)
 
         if (!$id || !$statusName) {
             http_response_code(400);
@@ -163,17 +143,13 @@ switch ($method) {
         break;
 
     case 'DELETE':
-<<<<<<< HEAD
+        $user = verifyToken();
         $id = (int)($_GET['id'] ?? 0);
         if (!$id) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Missing inquiry id']);
             exit;
         }
-=======
-        $user = verifyToken();
-        $id = (int)$_GET['id'];
->>>>>>> 8d2200f (improve admin content system)
         $stmt = $db->prepare("DELETE FROM inquiries WHERE id = :id");
         $stmt->execute([':id' => $id]);
         echo json_encode(['success' => true, 'message' => 'Inquiry deleted']);

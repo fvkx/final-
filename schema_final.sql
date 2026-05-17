@@ -49,11 +49,7 @@ CREATE TABLE IF NOT EXISTS content_pages (
     slug VARCHAR(255) NOT NULL UNIQUE,
     category_id INT NOT NULL,
     image_url VARCHAR(500),
-<<<<<<< HEAD
-    description TEXT DEFAULT NULL,
-=======
     description TEXT,
->>>>>>> 8d2200f (improve admin content system)
     featured BOOLEAN DEFAULT FALSE,
     status_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
