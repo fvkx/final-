@@ -119,8 +119,8 @@ export function PageEditor() {
         const newId = pageRes.id;
         // 2. Save Sections
         await contentApi.saveSections(newId, sections);
-        if (isNew) navigate(`/admin/content/edit/${newId}`);
-        else alert('Page saved successfully!');
+        alert(isNew ? 'Page created successfully!' : 'Page saved successfully!');
+        navigate('/admin/content');
       } else {
         alert('Error saving page: ' + (pageRes.message || 'Unknown error'));
       }
