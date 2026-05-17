@@ -41,6 +41,11 @@ function normalizeCategorySlug($category)
     return str_replace('_', '-', trim($category));
 }
 
+function denormalizeCategorySlug($category)
+{
+    return str_replace('-', '_', trim($category));
+}
+
 function normalizeSectionTypeName($type)
 {
     if ($type === 'rich_text') {
@@ -193,7 +198,7 @@ function annotatePage($page)
         if (isset($page['category_id']) && $page['category_id']) {
             $categorySlug = $page['category_slug'] ?? getCategorySlugById($page['category_id']);
             if ($categorySlug) {
-                $page['category'] = str_replace('-', '_', $categorySlug);
+                $page['category'] = str_replace('_', '-', $categorySlug);
             }
         }
 
@@ -202,6 +207,10 @@ function annotatePage($page)
             if ($statusName) {
                 $page['status'] = $statusName;
             }
+        }
+    } else {
+        if (isset($page['category'])) {
+            $page['category'] = str_replace('_', '-', $page['category']);
         }
     }
 
@@ -342,7 +351,7 @@ switch ($method) {
                     $params[':category'] = $normalizedCategory;
                 } elseif ($pagesHasCategory) {
                     $where = " WHERE category = :category";
-                    $params[':category'] = $category;
+                    $params[':category'] = denormalizeCategorySlug($category);
                 }
             }
 
@@ -414,7 +423,7 @@ switch ($method) {
 
                 if ($pagesHasCategory) {
                     $fields['category'] = ':category';
-                    $bindings[':category'] = $category;
+                    $bindings[':category'] = denormalizeCategorySlug($category);
                 }
 
                 if ($pagesHasStatus) {
