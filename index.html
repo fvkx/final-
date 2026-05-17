@@ -4,10 +4,178 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>website-app</title>
+    <title>Balingasag Tourism Guide</title>
+    <style>
+      /* Facebook-style Centered Brand Loading Screen (FCP Optimization) */
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      
+      .brand-loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        z-index: 99999;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      
+      .brand-loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: 16px;
+      }
+      
+      /* Logo Card: Emerald green box matching navbar */
+      .brand-logo-card {
+        width: 84px;
+        height: 84px;
+        background-color: #059669; /* Emerald-600 */
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3);
+      }
+      
+      .brand-logo-svg {
+        width: 44px;
+        height: 44px;
+        color: #ffffff;
+      }
+      
+      /* Logo Text */
+      .brand-text {
+        text-align: center;
+      }
+      
+      .brand-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827; /* Gray-900 */
+        margin: 0;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+      }
+      
+      .brand-subtitle {
+        font-size: 13px;
+        font-weight: 700;
+        color: #059669; /* Emerald-600 */
+        margin: 4px 0 0 0;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+      
+      /* Brand Pulse Animation */
+      @keyframes brand-pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(0.96);
+          opacity: 0.85;
+        }
+      }
+      
+      .brand-pulse {
+        animation: brand-pulse 2s infinite ease-in-out;
+      }
+      
+      /* Smooth high-fidelity line loader */
+      .brand-line-loader-track {
+        width: 120px;
+        height: 3px;
+        background-color: #e5e7eb; /* Gray-200 */
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 16px;
+      }
+      
+      @keyframes brand-loading-bar {
+        0% {
+          left: -40%;
+          width: 40%;
+        }
+        50% {
+          width: 60%;
+        }
+        100% {
+          left: 100%;
+          width: 40%;
+        }
+      }
+      
+      .brand-line-loader-bar {
+        height: 100%;
+        background-color: #059669; /* Emerald-600 */
+        position: relative;
+        animation: brand-loading-bar 1.6s infinite ease-in-out;
+      }
+      
+      /* Brand Footer like "from META" */
+      .brand-loading-footer {
+        padding-bottom: 40px;
+        text-align: center;
+      }
+      
+      .brand-footer-text {
+        font-size: 11px;
+        font-weight: 700;
+        color: #9ca3af; /* Gray-400 */
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Premium Facebook-style Centered Logo Pulsing Loading Screen -->
+      <div class="brand-loading-screen">
+        <div class="brand-loading-content">
+          <!-- Centered Logo Card -->
+          <div class="brand-logo-card brand-pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="brand-logo-svg">
+              <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          
+          <!-- Logo Text -->
+          <div class="brand-text">
+            <h1 class="brand-title">Balingasag</h1>
+            <p class="brand-subtitle">Tourism Guide</p>
+          </div>
+          
+          <!-- Smooth Line Loader -->
+          <div class="brand-line-loader-track">
+            <div class="brand-line-loader-bar"></div>
+          </div>
+        </div>
+        
+        <!-- Bottom Branding footer like "from META" -->
+        <div class="brand-loading-footer">
+          <p class="brand-footer-text">MUNICIPAL TOURISM OFFICE</p>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/app/main.tsx"></script>
   </body>
 </html>

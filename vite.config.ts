@@ -11,12 +11,12 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_BACKEND_URL || 'http://localhost/Balingasag-Tourism-Guide',
+          target: env.VITE_BACKEND_URL || 'http://127.0.0.1/new',
           changeOrigin: true,
         },
         // Proxy dynamically uploaded images from the PHP/Apache server
         '/uploads': {
-          target: (env.VITE_BACKEND_URL || 'http://localhost/Balingasag-Tourism-Guide') + '/public',
+          target: (env.VITE_BACKEND_URL || 'http://127.0.0.1/new') + '/public',
           changeOrigin: true,
         }
       }

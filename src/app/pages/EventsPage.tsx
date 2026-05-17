@@ -4,6 +4,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { contentApi } from '../lib/adminApi';
 import { Link } from 'react-router-dom';
 import { DynamicModal } from '../components/DynamicModal';
+import { SkeletonGrid } from '../components/SkeletonCard';
 
 export function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -55,9 +56,7 @@ export function EventsPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-20">
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-          </div>
+          <SkeletonGrid count={3} />
         ) : events.length === 0 ? (
           <div className="text-center py-20 text-gray-500 italic bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
             Event schedules are currently being finalized. Please check back later.

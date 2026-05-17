@@ -4,6 +4,7 @@ import { ChevronRight, Landmark } from 'lucide-react';
 import { contentApi } from '../lib/adminApi';
 import { Link } from 'react-router-dom';
 import { DynamicModal } from '../components/DynamicModal';
+import { SkeletonCard } from '../components/SkeletonCard';
 
 export function CulturePage() {
   const [pages, setPages] = useState<any[]>([]);
@@ -53,8 +54,9 @@ export function CulturePage() {
       {/* Content List */}
       <div className="max-w-6xl mx-auto px-4 py-20">
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <SkeletonCard />
+            <SkeletonCard />
           </div>
         ) : pages.length === 0 ? (
           <div className="text-center py-20 text-gray-500 italic">

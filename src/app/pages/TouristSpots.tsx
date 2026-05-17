@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, ChevronRight, Info, Waves } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { contentApi } from '../lib/adminApi';
+import { SkeletonGrid } from '../components/SkeletonCard';
 
 import { DynamicModal } from '../components/DynamicModal';
 
@@ -65,10 +66,7 @@ export function TouristSpots() {
       {/* Spots Grid */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-gray-500 font-medium">Discovering destinations...</p>
-          </div>
+          <SkeletonGrid count={6} />
         ) : filteredSpots.length === 0 ? (
           <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
             <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
