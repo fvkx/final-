@@ -82,12 +82,30 @@ if (basename($_SERVER['SCRIPT_FILENAME']) == 'auth.php') {
         $username = $input['username'] ?? '';
         $password = $input['password'] ?? '';
         
-        $stmt = $db->prepare("
-            SELECT u.*, r.role_name as role 
-            FROM users u 
-            JOIN roles r ON u.role_id = r.id 
-            WHERE u.username = :username
-        ");
+        // Detect schema at runtime
+        $userColumns = [];
+        $stmt = $db->query("SHOW COLUMNS FROM `users`");
+        if ($stmt) {
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                $userColumns[] = $row['Field'];
+            }
+        }
+        $useNormalizedUsers = in_array('role_id', $userColumns);
+
+        if ($useNormalizedUsers) {
+            $stmt = $db->prepare("
+                SELECT u.*, r.role_name as role 
+                FROM users u 
+                JOIN roles r ON u.role_id = r.id 
+                WHERE u.username = :username
+            ");
+        } else {
+            $stmt = $db->prepare("
+                SELECT u.*
+                FROM users u 
+                WHERE u.username = :username
+            ");
+        }
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         

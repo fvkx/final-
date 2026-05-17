@@ -14,14 +14,32 @@ if ($user->role !== 'admin' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Detect schema at runtime
+$userColumns = [];
+$stmt = $db->query("SHOW COLUMNS FROM `users`");
+if ($stmt) {
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $userColumns[] = $row['Field'];
+    }
+}
+$useNormalizedUsers = in_array('role_id', $userColumns);
+
 switch ($method) {
     case 'GET':
-        $stmt = $db->query("
-            SELECT u.id, u.username, u.email, r.role_name as role, u.created_at
-            FROM users u
-            JOIN roles r ON u.role_id = r.id
-            ORDER BY u.created_at DESC
-        ");
+        if ($useNormalizedUsers) {
+            $stmt = $db->query("
+                SELECT u.id, u.username, u.email, r.role_name as role, u.created_at
+                FROM users u
+                JOIN roles r ON u.role_id = r.id
+                ORDER BY u.created_at DESC
+            ");
+        } else {
+            $stmt = $db->query("
+                SELECT u.id, u.username, u.email, u.role as role, u.created_at
+                FROM users u
+                ORDER BY u.created_at DESC
+            ");
+        }
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(['success' => true, 'data' => $users]);
         break;
@@ -40,34 +58,47 @@ switch ($method) {
             exit;
         }
 
-        // Look up the role_id from the roles table
-        $roleStmt = $db->prepare("SELECT id FROM roles WHERE role_name = :role_name");
-        $roleStmt->execute([':role_name' => $roleName]);
-        $role = $roleStmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$role) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Invalid role specified']);
-            exit;
-        }
-
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
         try {
-            $stmt = $db->prepare("
-                INSERT INTO users (username, email, password_hash, role_id, created_at)
-                VALUES (:username, :email, :password_hash, :role_id, NOW())
-            ");
-            $stmt->execute([
-                ':username'      => $username,
-                ':email'         => $email,
-                ':password_hash' => $password_hash,
-                ':role_id'       => $role['id'],
-            ]);
+            if ($useNormalizedUsers) {
+                // Look up the role_id from the roles table
+                $roleStmt = $db->prepare("SELECT id FROM roles WHERE role_name = :role_name");
+                $roleStmt->execute([':role_name' => $roleName]);
+                $role = $roleStmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$role) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid role specified']);
+                    exit;
+                }
+
+                $stmt = $db->prepare("
+                    INSERT INTO users (username, email, password_hash, role_id, created_at)
+                    VALUES (:username, :email, :password_hash, :role_id, NOW())
+                ");
+                $stmt->execute([
+                    ':username'      => $username,
+                    ':email'         => $email,
+                    ':password_hash' => $password_hash,
+                    ':role_id'       => $role['id'],
+                ]);
+            } else {
+                $stmt = $db->prepare("
+                    INSERT INTO users (username, email, password_hash, role, created_at)
+                    VALUES (:username, :email, :password_hash, :role, NOW())
+                ");
+                $stmt->execute([
+                    ':username'      => $username,
+                    ':email'         => $email,
+                    ':password_hash' => $password_hash,
+                    ':role'          => $roleName,
+                ]);
+            }
             echo json_encode(['success' => true, 'message' => 'User created successfully']);
         } catch (PDOException $e) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Error: Username or email might already exist']);
+            echo json_encode(['success' => false, 'message' => 'Error: Username or email might already exist: ' . $e->getMessage()]);
         }
         break;
 
