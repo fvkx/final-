@@ -465,7 +465,6 @@ export function PageEditor() {
                   }}
                 >
                   <option value="tourist-spot">Tourist Spot</option>
-                  <option value="culture">Culture & Heritage</option>
                   <option value="event">Event</option>
                   <option value="travel-guide">Travel Guide</option>
                 </select>

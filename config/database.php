@@ -37,7 +37,7 @@ class Database {
             // Log the error internally and return a generic JSON message to prevent information leakage
             error_log("Connection error: " . $exception->getMessage());
             die(json_encode(["success" => false, "message" => "Database connection failed."]));
-        }
+        }   
 
         return $this->conn;
     }

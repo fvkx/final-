@@ -1,38 +1,58 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Landmark } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { ChevronRight, Landmark } from 'lucide-react';
-import { contentApi } from '../lib/adminApi';
 import { Link } from 'react-router-dom';
-import { DynamicModal } from '../components/DynamicModal';
-import { SkeletonCard } from '../components/SkeletonCard';
+
+const curatedSections = [
+  {
+    title: '🛖 Tribal Roots and Etymology',
+    content: [
+      'The Name: The word "Balingasag" comes from the Cebuano words baling (fishing net) and kasag (crab), honoring its traditional livelihood as a coastal fishing village.',
+      'Pre-Hispanic Rule: Long before Spanish arrival, the settlement was governed by two powerful native Datus who represented the Valmores and Madroño clans. They peacefully divided the town—a dual family heritage that local history still recognizes today.',
+      'Indigenous Culture: Beyond the town center, the mountains of Balingasag shelter indigenous Higaonon communities that continue to perform colorful ritual dances and preserve ancestral farming styles.'
+    ],
+    image: '/uploads/balingasag_river.jpg',
+    imageAlt: 'Tribal Roots & Weaving Crafts'
+  },
+  {
+    title: '🏛️ Colonial Architecture & Heritage Houses',
+    content: [
+      'Balingasag is famous across Northern Mindanao for its high concentration of intact 19th-century Bahay na Bato structures.',
+      'The Vega Ancestral House: This 200-year-old landmark is the crown jewel of the town\'s heritage. Built using rare Philippine hardwoods like molave (tugas) and tindalo, its unique feature is the carved wooden figures called oti-ot. These sculptures resemble the Greek titan Atlas and look as if they are carrying the weight of the second floor on their shoulders. Historically, national figures like Emilio Aguinaldo and Sergio Osmeña stayed here.',
+      'Other Ancestral Mansions: Structures like the Ramon Neri Ludeña House and the Moreno-Almendrala House give the town center a living-history museum atmosphere.'
+    ],
+    image: '/uploads/vega_ancestral_house.jpg',
+    imageAlt: 'Colonial Heritage & Vega Ancestral House'
+  },
+  {
+    title: '⛪ Religious Devotion & Festivals',
+    content: [
+      'Faith Center: The Sta. Rita de Cascia Parish Church stands as a symbol of the town\'s resilience. Its brick facade links the community directly to the early Jesuit mission established in 1744.',
+      'The Santo Niño Legacy: Cebuano merchant Ignacio Juan Vega introduced the deep devotion to the Señor Santo Niño in the 1800s. This eventually blossomed into the Sinulog sa Balingasag, the town\'s grandest annual cultural dance festival celebrated every January.'
+    ],
+    image: 'https://images.unsplash.com/photo-1581513118044-696c147c1a66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwZmVzdGl2YWwlMjBjb2xvcmZ1bCUyMGNlbGVicmF0aW9ufGVufDF8fHx8MTc3Nzk2NTg5NXww&ixlib=rb-4.1.0&q=80&w=1080',
+    imageAlt: 'Religious Devotions & Sinulog sa Balingasag'
+  },
+  {
+    title: '🍛 Culinary Heritage',
+    content: [
+      'Kakanin Traditions: Local food culture is anchored in sweet sticky rice treats.',
+      'Bibingka: The town is locally celebrated for its native Bibingka (baked rice cakes), a popular comfort food and souvenir for travelers passing through the national highway.'
+    ],
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaWxpcGlubyUyMGZvb2QlMjBkZXNzZXJ0JTIwYmliaW5na2F8ZW58MXx8fHwxNzc3OTY1ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageAlt: 'Balingasag Culinary Heritage & Bibingka'
+  }
+];
 
 export function CulturePage() {
-  const [pages, setPages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-
   useEffect(() => {
     document.title = 'Culture & Heritage | Balingasag Tourism Guide';
-    fetchPages();
   }, []);
-
-  const fetchPages = async () => {
-    try {
-      const response = await contentApi.getAll('culture');
-      if (response.success) {
-        setPages(response.data.filter((p: any) => p.status === 'published'));
-      }
-    } catch (error) {
-      console.error('Failed to fetch culture pages:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="relative bg-amber-800 py-24 px-4 text-white overflow-hidden">
+      <div className="relative bg-amber-800 py-20 px-4 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <ImageWithFallback
             src="https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwaW5kaWdlbm91cyUyMGN1bHR1cmUlMjB3ZWF2aW5nJTIwY3JhZnRzfGVufDF8fHx8MTc3Nzk2NTkwMHww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -45,55 +65,39 @@ export function CulturePage() {
             <Landmark className="w-4 h-4 text-amber-300" />
             <span className="text-xs font-bold uppercase tracking-wider text-amber-100">Traditions & Identity</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Local Culture & Heritage</h1>
-          <p className="text-amber-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-            Explore the living traditions, indigenous heritage, and vibrant cultural identity that define the soul of Balingasag.
+          <h1 className="text-4xl md:text-5xl font-extrabold mt-2 mb-4 leading-tight">
+            Local Culture & Heritage of Balingasag
+          </h1>
+          <p className="text-amber-100 text-lg max-w-3xl mx-auto leading-relaxed">
+            The local culture and heritage of Balingasag blend pre-Hispanic tribal rules, deep-rooted Catholic faith, and remarkably intact Spanish-colonial architecture. Local advocates are pushing for the town's inclusion in the UNESCO World Heritage list due to its well-preserved historical structures.
           </p>
         </div>
       </div>
 
-      {/* Content List */}
-      <div className="max-w-6xl mx-auto px-4 py-20">
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
-        ) : pages.length === 0 ? (
-          <div className="text-center py-20 text-gray-500 italic">
-            Cultural heritage content is being prepared. Please check back soon.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {pages.map((page) => (
-              <div
-                key={page.id}
-                onClick={() => setSelectedSlug(page.slug)}
-                className="group flex flex-col bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer"
-              >
-                <div className="relative h-72 overflow-hidden">
-                  <ImageWithFallback
-                    src={page.image_url || 'https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080'}
-                    alt={page.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-amber-700 transition-colors mb-3">
-                    {page.title}
-                  </h3>
-                  <p className="text-gray-600 mb-6 line-clamp-3 leading-relaxed">
-                    {page.description || `Discover the rich history and traditions associated with ${page.title}. Click to explore detailed highlights and media.`}
-                  </p>
-                  <span className="text-amber-700 font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Explore Heritage <ChevronRight className="w-5 h-5" />
-                  </span>
-                </div>
+      {/* Curated Content Sections (Alternating standard layout) */}
+      <div className="max-w-6xl mx-auto px-4 py-16 space-y-20">
+        {curatedSections.map((section, idx) => (
+          <div
+            key={section.title}
+            className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+          >
+            <div className={idx % 2 === 1 ? 'lg:order-2' : ''}>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-5">{section.title}</h2>
+              <div className="space-y-4">
+                {section.content.map((para, i) => (
+                  <p key={i} className="text-gray-600 leading-relaxed">{para}</p>
+                ))}
               </div>
-            ))}
+            </div>
+            <div className={`rounded-2xl overflow-hidden shadow-xl aspect-[4/3] ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
+              <ImageWithFallback
+                src={section.image}
+                alt={section.imageAlt}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
       {/* Cultural Respect Note */}
@@ -111,13 +115,6 @@ export function CulturePage() {
           </Link>
         </div>
       </div>
-
-      {/* Detail Modal */}
-      <DynamicModal 
-        slug={selectedSlug || ''} 
-        isOpen={!!selectedSlug} 
-        onClose={() => setSelectedSlug(null)} 
-      />
     </div>
   );
 }

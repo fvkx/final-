@@ -6,7 +6,6 @@ import { AdminSkeletonList } from '../../components/SkeletonCard';
 
 const categories = [
   { id: 'tourist-spot', name: 'Tourist Spots', icon: Globe, color: 'text-emerald-600 bg-emerald-50' },
-  { id: 'culture', name: 'Culture & Heritage', icon: FileText, color: 'text-amber-600 bg-amber-50' },
   { id: 'event', name: 'Events', icon: Layout, color: 'text-purple-600 bg-purple-50' },
   { id: 'travel-guide', name: 'Travel Guide', icon: FileText, color: 'text-blue-600 bg-blue-50' },
 ];

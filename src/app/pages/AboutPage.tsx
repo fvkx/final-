@@ -5,52 +5,44 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 const factCards = [
   { icon: Globe, label: 'Province', value: 'Misamis Oriental' },
   { icon: MapPin, label: 'Region', value: 'Northern Mindanao (Region X)' },
-  { icon: Users, label: 'Population', value: '~65,000+' },
-  { icon: Calendar, label: 'Patron Saint', value: 'St. Michael the Archangel' },
-  { icon: Mountain, label: 'Terrain', value: 'Coastal & Upland' },
-  { icon: Waves, label: 'Waterfront', value: 'Macajalar Bay' },
+  { icon: Users, label: 'Population', value: '~75,000 residents' },
+  { icon: Calendar, label: 'Patron Saint', value: 'Señor Santo Niño & Santa Rita' },
+  { icon: Mountain, label: 'Terrain', value: 'Coastal & Rugged Mountains' },
+  { icon: Waves, label: 'Waterfront', value: 'Macajalar Bay coastline' },
 ];
 
 const sections = [
   {
-    title: 'A Brief History',
+    title: '📍Geography & Location',
     content: [
-      'Balingasag is one of the oldest municipalities in Misamis Oriental, with roots stretching back to the pre-colonial era when Higaonon tribes inhabited its forested highlands and coastal communities lived along the shores of Macajalar Bay.',
-      'The Spanish colonial period brought about the formal establishment of a parish and the reorganization of settlements around the Catholic church and central plaza — a pattern that persists in the town\'s urban layout today. The name "Balingasag" is believed to have origins in the local Visayan dialect, though its exact etymology remains a topic of local historical discussion.',
-      'During the American colonial period, Balingasag was officially constituted as a municipality, with its boundaries, governance structure, and public institutions taking shape during this era. The municipality has grown steadily over the decades while retaining its strong sense of community and cultural identity.'
+      'Balingasag is a coastal municipality located in the province of Misamis Oriental, Philippines. It sits along the shores of Macajalar Bay, approximately 52 kilometers northeast of the regional capital, Cagayan de Oro City. The town is bordered by the municipality of Lagonglong to the north, Jasaan to the south, and a rugged mountainous interior to the east. It serves as a vital economic hub for neighboring towns due to its flat coastal plains and strategic location along the major national highway.'
     ],
-    image: 'https://images.unsplash.com/photo-1760549310131-b09d86c601e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMGhlcml0YWdlJTIwY2h1cmNoJTIwY29sb25pYWx8ZW58MXx8fHwxNzc3OTY1ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    imageAlt: 'Balingasag heritage church'
+    image: '/uploads/about_geography.png',
+    imageAlt: 'Geography & Location of Balingasag'
   },
   {
-    title: 'Geography & Location',
+    title: '📜A Brief History',
     content: [
-      'Balingasag is strategically located along the northern coast of Mindanao, fronting the expansive Macajalar Bay. It lies approximately 60 kilometers east of Cagayan de Oro City, the regional center of Northern Mindanao. The municipality is bounded by the sea to the north and the Balatukan Mountain Range to the south, creating a dramatic landscape that transitions from coastal lowlands to forested highlands within a short distance.',
-      'The municipality encompasses 26 barangays, spanning both coastal and upland areas. Its total land area includes fertile agricultural lands, forest reserves, river systems, and a significant stretch of coastline. This varied terrain supports diverse ecosystems — from coral reefs and mangrove forests along the coast to tropical forests and waterfalls in the highlands.',
-      'The Balatukan Range, which forms the southern backdrop of Balingasag, is a significant natural landmark shared with neighboring municipalities and is part of the larger biodiversity corridor of Misamis Oriental.'
+      'Founded as a mission station by Jesuit priests in 1744, Balingasag is one of the oldest settlements in Misamis Oriental. The town\'s early center developed around the Sta. Rita de Cascia Parish. During the Spanish colonial era, it was established as a formal pueblo due to its growing population and economic importance. The town survived structural burnings during the Philippine-American War and occupation during World War II, transitioning after the wars into a peaceful agricultural and fishing community.'
     ],
-    image: 'https://images.unsplash.com/photo-1758782551912-80cf4c578220?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waWNhbCUyMGlzbGFuZCUyMGJheSUyMFBoaWxpcHBpbmVzJTIwYWVyaWFsJTIwdmlld3xlbnwxfHx8fDE3Nzc5NjU5MDR8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    imageAlt: 'Macajalar Bay aerial view'
+    image: '/uploads/vega_ancestral_house.jpg',
+    imageAlt: 'A Brief History of Balingasag'
   },
   {
-    title: 'Population & Community',
+    title: '👥 Population & Community',
     content: [
-      'Balingasag is home to a diverse population of approximately 65,000 residents, comprising mainly Visayan-speaking settlers (predominantly Cebuano and Binisaya speakers) alongside significant communities of Higaonon indigenous peoples in the upland barangays. This multicultural composition gives the municipality its unique social and cultural character.',
-      'The local economy is driven by a combination of fishing, agriculture, trade, and a growing services sector. Fishing communities along Macajalar Bay form the backbone of the coastal economy, while inland barangays focus on tropical fruit farming — particularly bananas, pineapples, lanzones, and coconuts.',
-      'The community is known for its warm hospitality and strong sense of bayanihan (communal cooperation). Residents take pride in their municipality and actively participate in local governance, religious activities, and cultural preservation efforts.'
+      'Balingasag is classified as a 1st class municipality, with a population hovering around 75,000 residents distributed across 30 barangays. The community is predominantly Cebuano-speaking, and the local culture is deeply anchored in Roman Catholicism. Agriculture and fishing form the economic backbone of the community, creating a tight-knit, hospitable, and culturally vibrant society that takes great pride in its shared heritage.'
     ],
-    image: 'https://images.unsplash.com/photo-1759773533571-16c133e10ae8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMGZpc2hpbmclMjB2aWxsYWdlJTIwY29tbXVuaXR5fGVufDF8fHx8MTc3Nzk2MjE2OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    imageAlt: 'Balingasag community'
+    image: '/uploads/about_population.jpg',
+    imageAlt: 'Population & Community in Balingasag'
   },
   {
-    title: 'Tourism Overview',
+    title: '🏝️Tourism Overview',
     content: [
-      'Balingasag is an emerging tourism destination in Misamis Oriental, offering visitors an authentic and relatively undiscovered alternative to more commercialized destinations in the region. Its appeal lies in the combination of natural attractions — from pristine beaches and lush waterfalls to biodiversity-rich forests and marine sanctuaries — alongside a rich cultural heritage that spans both indigenous and colonial history.',
-      'The Municipal Tourism Office actively promotes responsible and sustainable tourism, working with local communities to develop ecotourism programs, cultural tours, and visitor experiences that benefit local residents directly. Community-based tourism initiatives in upland barangays allow visitors to experience authentic rural life and indigenous culture.',
-      'Infrastructure improvements, increased accessibility from Cagayan de Oro City, and growing awareness of Balingasag\'s natural and cultural assets are driving a steady increase in visitor numbers, positioning the municipality as one of Misamis Oriental\'s notable tourism destinations.'
+      'The town blends historical charm with natural coastal beauty. Its tourism landscape features Spanish-era ancestral homes and the landmark Sta. Rita de Cascia Parish Church. Nature lovers frequently visit the White Shoal reef for diving and the scenic Balingasag Riverboardwalk park for sunsets. The town experiences its highest peak in tourism during the annual Sinulog sa Balingasag festival in January and the feast of Santa Rita in May.'
     ],
-    image: 'https://images.unsplash.com/photo-1646821198791-a3e16385a689?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waWNhbCUyMGJlYWNoJTIwc3Vuc2V0JTIwUGhpbGlwcGluZXMlMjBpc2xhbmR8ZW58MXx8fHwxNzc3OTY1ODk5fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    imageAlt: 'Balingasag tourism'
+    image: '/uploads/white_shoal_reef.jpg',
+    imageAlt: 'Tourism Overview in Balingasag'
   }
 ];
 
