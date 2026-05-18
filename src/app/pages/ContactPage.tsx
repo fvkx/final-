@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { inquiriesApi } from '../lib/adminApi';
@@ -35,6 +35,7 @@ const officeInfo = [
 
 export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -42,14 +43,19 @@ export function ContactPage() {
     reset
   } = useForm<FormData>();
 
+  useEffect(() => {
+    document.title = 'Contact Us | Balingasag Municipal Tourism Office';
+  }, []);
+
   const onSubmit = async (data: FormData) => {
+    setSubmitError(null);
     try {
       await inquiriesApi.create(data);
       setSubmitted(true);
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to submit inquiry:', error);
-      alert('Failed to send message. Please try again later.');
+      setSubmitError('Failed to send message. Please verify your internet connection, ensure your email address is correct, and try again.');
     }
   };
 
@@ -125,6 +131,23 @@ export function ContactPage() {
                     <h2 className="text-2xl font-extrabold text-gray-900 mt-1">Send Us a Message</h2>
                     <p className="text-gray-500 text-sm mt-1">All fields are required. We aim to respond within 1–2 business days.</p>
                   </div>
+
+                  {submitError && (
+                    <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-start gap-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-bold text-sm">Submission Failed</div>
+                        <p className="text-xs text-red-700 mt-0.5 leading-relaxed">{submitError}</p>
+                        <button 
+                          type="button"
+                          onClick={() => setSubmitError(null)}
+                          className="text-xs text-red-600 hover:text-red-800 underline font-medium mt-1.5 block"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                     {/* Full Name */}

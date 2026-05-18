@@ -103,15 +103,18 @@ function getCategoryId($category)
         return null;
     }
 
-    $stmt = $db->prepare("SELECT id FROM categories WHERE slug = :slug");
-    $stmt->execute([':slug' => $slug]);
+    $name = ucwords(str_replace(['-', '_'], ' ', $slug));
+
+    // Support matching either the exact slug OR the exact name for extreme robustness
+    $stmt = $db->prepare("SELECT id FROM categories WHERE slug = :slug OR name = :name");
+    $stmt->execute([':slug' => $slug, ':name' => $name]);
     $id = $stmt->fetchColumn();
 
     if ($id) {
+        // Keep the database consistent by updating slug if it differs
         return $id;
     }
 
-    $name = ucwords(str_replace(['-', '_'], ' ', $slug));
     $stmt = $db->prepare("INSERT INTO categories (name, slug) VALUES (:name, :slug)");
     $stmt->execute([':name' => $name, ':slug' => $slug]);
     return $db->lastInsertId();

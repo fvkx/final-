@@ -88,7 +88,7 @@ export const transportOptions: TransportOption[] = [
     from: 'Cagayan de Oro City (CDO)',
     method: 'Private Vehicle / Car',
     duration: '1 hour (via Highway)',
-    description: 'Drive via the Cagayan-Iligan highway (N1) eastward. After passing Opol and El Salvador, continue to Balingasag. The route is well-paved and clearly signposted. Ample parking is available in the town center.',
+    description: 'Drive via the Butuan-Cagayan de Oro-Iligan Road (national highway) eastward. After passing Bugo, Tagoloan, Villanueva, and Jasaan, you will arrive at Balingasag. The route is well-paved, scenic, and clearly signposted.',
     icon: 'car'
   },
   {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { MapPin, Users, Mountain, Waves, Calendar, Globe } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
@@ -54,6 +55,10 @@ const sections = [
 ];
 
 export function AboutPage() {
+  useEffect(() => {
+    document.title = 'About Balingasag | History, Geography & Tourism';
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Header */}

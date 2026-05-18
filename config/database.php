@@ -21,7 +21,7 @@ class Database {
         try {
             // Secure connection using PDO with UTF-8 charset to prevent encoding-based attacks
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";port=3307;dbname=" . $this->db_name . ";charset=utf8mb4",
+                "mysql:host=" . $this->host . ";port=3306;dbname=" . $this->db_name . ";charset=utf8mb4",
                 $this->username,
                 $this->password
             );

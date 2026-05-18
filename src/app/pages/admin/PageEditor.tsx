@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Save, ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, 
   Image as ImageIcon, Type, LayoutGrid, ListChecks, 
-  Settings, Eye, Upload, X
+  Settings, Eye, Upload, X, Loader2
 } from 'lucide-react';
 import { contentApi, mediaApi } from '../../lib/adminApi';
 import { SectionRenderer } from '../../components/SectionRenderer';
@@ -21,10 +21,13 @@ export function PageEditor() {
   const { id } = useParams();
   const isNew = id === 'new';
   const navigate = useNavigate();
-  const { toast } = useNotifications();
+  const { toast, confirm } = useNotifications();
   
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [uploadingSectionIdx, setUploadingSectionIdx] = useState<number | null>(null);
+  const [uploadingMainImage, setUploadingMainImage] = useState(false);
   const [page, setPage] = useState<any>({
     title: '',
     slug: '',
@@ -36,10 +39,11 @@ export function PageEditor() {
   const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
+    document.title = isNew ? 'Create New Page | Balingasag CMS' : 'Edit Page | Balingasag CMS';
     if (!isNew) {
       fetchPage();
     }
-  }, [id]);
+  }, [id, isNew]);
 
   const fetchPage = async () => {
     const pageId = Number(id);
@@ -53,6 +57,7 @@ export function PageEditor() {
       if (response.success) {
         setPage(response.data);
         setSections(response.data.sections || []);
+        document.title = `Edit Page: ${response.data.title} | Balingasag CMS`;
       }
     } catch (error) {
       console.error('Failed to fetch page:', error);
@@ -69,10 +74,12 @@ export function PageEditor() {
     if (type === 'facts') newData.data = { title: 'Highlights', items: [] };
     
     setSections([...sections, newData]);
+    setIsDirty(true);
   };
 
   const removeSection = (index: number) => {
     setSections(sections.filter((_, i) => i !== index));
+    setIsDirty(true);
   };
 
   const moveSection = (index: number, direction: 'up' | 'down') => {
@@ -84,15 +91,19 @@ export function PageEditor() {
     newSections[index] = newSections[targetIndex];
     newSections[targetIndex] = temp;
     setSections(newSections);
+    setIsDirty(true);
   };
 
   const updateSectionData = (index: number, newData: any) => {
     const newSections = [...sections];
     newSections[index].data = { ...newSections[index].data, ...newData };
     setSections(newSections);
+    setIsDirty(true);
   };
 
   const handleFileUpload = async (index: number, file: File, field: string = 'imageUrl') => {
+    setUploadingSectionIdx(index);
+    setIsDirty(true);
     try {
       const response = await mediaApi.upload(file);
       if (response.success) {
@@ -102,9 +113,14 @@ export function PageEditor() {
         } else {
           updateSectionData(index, { [field]: response.url });
         }
+      } else {
+        toast('Failed to upload image: ' + (response.message || 'Server error'), 'error');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
+      toast('Failed to upload image: ' + (error.message || 'Network error'), 'error');
+    } finally {
+      setUploadingSectionIdx(null);
     }
   };
 
@@ -123,6 +139,7 @@ export function PageEditor() {
         // 2. Save Sections
         await contentApi.saveSections(newId, sections);
         toast(isNew ? 'Page created successfully!' : 'Page saved successfully!', 'success');
+        setIsDirty(false);
         navigate('/admin/content');
       } else {
         toast('Error saving page: ' + (pageRes.message || 'Unknown error'), 'error');
@@ -135,6 +152,29 @@ export function PageEditor() {
     }
   };
 
+  const handleBack = async () => {
+    if (isDirty) {
+      const confirmed = await confirm(
+        'Discard Unsaved Changes?',
+        'You have unsaved changes in your editor. Are you sure you want to go back and discard them?'
+      );
+      if (!confirmed) return;
+    }
+    navigate('/admin/content');
+  };
+
+  // Keyboard shortcut Ctrl + S to save page
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [page, sections, isNew]);
+
   if (loading) return <div className="p-12 text-center text-gray-400">Loading editor...</div>;
 
   return (
@@ -142,7 +182,7 @@ export function PageEditor() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8 sticky top-0 bg-gray-50 py-4 z-10">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/admin/content')} className="p-2 hover:bg-white rounded-lg transition-all">
+          <button onClick={handleBack} className="p-2 hover:bg-white rounded-lg transition-all" title="Go back to list">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
@@ -212,15 +252,24 @@ export function PageEditor() {
                         />
                       </div>
                       <div className="w-32 h-20 bg-gray-100 rounded-lg overflow-hidden relative group">
-                        {section.data.imageUrl ? (
-                          <img src={section.data.imageUrl} className="w-full h-full object-cover" />
+                        {uploadingSectionIdx === idx ? (
+                          <div className="flex flex-col items-center justify-center h-full bg-emerald-50 text-emerald-600">
+                            <Loader2 className="w-6 h-6 animate-spin mb-1" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
+                          </div>
                         ) : (
-                          <div className="flex items-center justify-center h-full text-gray-400"><ImageIcon className="w-6 h-6" /></div>
+                          <>
+                            {section.data.imageUrl ? (
+                              <img src={section.data.imageUrl} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="flex items-center justify-center h-full text-gray-400"><ImageIcon className="w-6 h-6" /></div>
+                            )}
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                              <Upload className="w-5 h-5 text-white" />
+                              <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0])} />
+                            </label>
+                          </>
                         )}
-                        <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                          <Upload className="w-5 h-5 text-white" />
-                          <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0])} />
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -263,10 +312,17 @@ export function PageEditor() {
                           ><Trash2 className="w-4 h-4" /></button>
                         </div>
                       ))}
-                      <label className="w-20 h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition-all">
-                        <Plus className="w-5 h-5 text-gray-400" />
-                        <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0], 'images')} />
-                      </label>
+                      {uploadingSectionIdx === idx ? (
+                        <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-lg border-2 border-dashed border-emerald-200 flex flex-col items-center justify-center">
+                          <Loader2 className="w-5 h-5 animate-spin mb-1" />
+                          <span className="text-[8px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
+                        </div>
+                      ) : (
+                        <label className="w-20 h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition-all">
+                          <Plus className="w-5 h-5 text-gray-400" />
+                          <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0], 'images')} />
+                        </label>
+                      )}
                     </div>
                   </div>
                 )}
@@ -359,17 +415,31 @@ export function PageEditor() {
                       title: newTitle, 
                       slug: page.slug === '' || page.slug === page.title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') ? newSlug : page.slug 
                     });
+                    setIsDirty(true);
                   }}
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Slug (URL)</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Web Address (Slug URL)</label>
                 <input
                   type="text"
                   className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 font-mono text-sm"
+                  placeholder="e.g. falls-adventure"
                   value={page.slug}
-                  onChange={(e) => setPage({ ...page, slug: e.target.value.toLowerCase().replace(/ /g, '-') })}
+                  onChange={(e) => {
+                    const sanitizedVal = e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-');
+                    setPage({ ...page, slug: sanitizedVal });
+                    setIsDirty(true);
+                  }}
+                  onBlur={(e) => {
+                    // Remove leading/trailing hyphens and multiple consecutive hyphens on blur
+                    const blurredVal = e.target.value.replace(/^-+|-+$/g, '').replace(/-+/g, '-');
+                    setPage({ ...page, slug: blurredVal });
+                  }}
                 />
+                <p className="text-[10px] text-gray-400 mt-1 leading-tight">
+                  This forms the web address of your page, e.g. <code>balingasag.com/p/<strong>{page.slug || 'slug'}</strong></code>. Only lowercase letters, numbers, and hyphens allowed.
+                </p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Short Description</label>
@@ -378,7 +448,10 @@ export function PageEditor() {
                   rows={3}
                   placeholder="A brief summary for cards and search results..."
                   value={page.description || ''}
-                  onChange={(e) => setPage({ ...page, description: e.target.value })}
+                  onChange={(e) => {
+                    setPage({ ...page, description: e.target.value });
+                    setIsDirty(true);
+                  }}
                 />
               </div>
               <div>
@@ -386,7 +459,10 @@ export function PageEditor() {
                 <select
                   className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-teal-100"
                   value={page.category}
-                  onChange={(e) => setPage({ ...page, category: e.target.value })}
+                  onChange={(e) => {
+                    setPage({ ...page, category: e.target.value });
+                    setIsDirty(true);
+                  }}
                 >
                   <option value="tourist-spot">Tourist Spot</option>
                   <option value="culture">Culture & Heritage</option>
@@ -399,7 +475,10 @@ export function PageEditor() {
                 <select
                   className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-teal-100"
                   value={page.status}
-                  onChange={(e) => setPage({ ...page, status: e.target.value })}
+                  onChange={(e) => {
+                    setPage({ ...page, status: e.target.value });
+                    setIsDirty(true);
+                  }}
                 >
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
@@ -408,7 +487,12 @@ export function PageEditor() {
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Main Thumbnail Image</label>
                 <div className="relative group aspect-video bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
-                  {page.image_url ? (
+                  {uploadingMainImage ? (
+                    <div className="flex flex-col items-center justify-center h-full bg-emerald-50 text-emerald-600 gap-2">
+                      <Loader2 className="w-8 h-8 animate-spin" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider animate-pulse">Uploading Image...</span>
+                    </div>
+                  ) : page.image_url ? (
                     <img src={page.image_url} className="w-full h-full object-cover" />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
@@ -416,24 +500,35 @@ export function PageEditor() {
                       <span className="text-[10px] font-bold uppercase">No Image Set</span>
                     </div>
                   )}
-                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
-                    <Upload className="w-6 h-6" />
-                    <span className="text-xs font-bold uppercase">Change Image</span>
-                    <input 
-                      type="file" 
-                      className="hidden" 
-                      onChange={async (e) => {
-                        if (e.target.files?.[0]) {
-                          try {
-                            const res = await mediaApi.upload(e.target.files[0]);
-                            if (res.success) setPage({ ...page, image_url: res.url });
-                          } catch (err) {
-                            console.error('Main image upload failed:', err);
+                  {!uploadingMainImage && (
+                    <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
+                      <Upload className="w-6 h-6" />
+                      <span className="text-xs font-bold uppercase">Change Image</span>
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        onChange={async (e) => {
+                          if (e.target.files?.[0]) {
+                            setUploadingMainImage(true);
+                            setIsDirty(true);
+                            try {
+                              const res = await mediaApi.upload(e.target.files[0]);
+                              if (res.success) {
+                                setPage({ ...page, image_url: res.url });
+                              } else {
+                                toast('Upload failed: ' + (res.message || 'Server error'), 'error');
+                              }
+                            } catch (err: any) {
+                              console.error('Main image upload failed:', err);
+                              toast('Upload failed: ' + (err.message || 'Network error'), 'error');
+                            } finally {
+                              setUploadingMainImage(false);
+                            }
                           }
-                        }
-                      }} 
-                    />
-                  </label>
+                        }} 
+                      />
+                    </label>
+                  )}
                 </div>
                 <p className="text-[10px] text-gray-400 mt-2 leading-tight">
                   This image appears as the thumbnail on the landing pages and category grids.
@@ -444,7 +539,10 @@ export function PageEditor() {
                   type="checkbox"
                   id="featured"
                   checked={page.featured}
-                  onChange={(e) => setPage({ ...page, featured: e.target.checked })}
+                  onChange={(e) => {
+                    setPage({ ...page, featured: e.target.checked });
+                    setIsDirty(true);
+                  }}
                   className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                 />
                 <label htmlFor="featured" className="text-sm font-semibold text-gray-700">Feature this page</label>

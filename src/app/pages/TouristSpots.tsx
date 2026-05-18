@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, ChevronRight, Info, Waves } from 'lucide-react';
+import { Search, ChevronRight, Info, Waves, X } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { contentApi } from '../lib/adminApi';
 import { SkeletonGrid } from '../components/SkeletonCard';
@@ -13,6 +13,7 @@ export function TouristSpots() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Tourist Spots | Balingasag Nature & Attractions';
     fetchSpots();
   }, []);
 
@@ -56,11 +57,25 @@ export function TouristSpots() {
           <input
             type="text"
             placeholder="Search destinations..."
-            className="w-full pl-12 pr-4 py-3 rounded-xl text-gray-900 bg-gray-50 border border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all shadow-sm"
+            className="w-full pl-12 pr-12 py-3 rounded-xl text-gray-900 bg-gray-50 border border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 p-1 rounded-full hover:bg-gray-100 transition-all"
+              title="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
+        {searchTerm && (
+          <div className="text-center text-xs text-gray-500 mt-2 font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+            Showing {filteredSpots.length} {filteredSpots.length === 1 ? 'destination' : 'destinations'} matching "{searchTerm}"
+          </div>
+        )}
       </div>
 
       {/* Spots Grid */}

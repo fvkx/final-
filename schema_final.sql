@@ -1,5 +1,6 @@
 -- Finalized Database Schema (3NF)
-CREATE DATABASE IF NOT EXISTS balingasag_cms;
+DROP DATABASE IF EXISTS balingasag_cms;
+CREATE DATABASE balingasag_cms;
 USE balingasag_cms;
 
 -- 1. Roles Table (Normalization of user roles)
@@ -29,10 +30,10 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 INSERT IGNORE INTO categories (name, slug) VALUES 
-('Tourist Spot', 'tourist_spot'), 
+('Tourist Spot', 'tourist-spot'), 
 ('Culture & Heritage', 'culture'), 
 ('Events & Festivals', 'event'), 
-('Travel Guide', 'travel_guide');
+('Travel Guide', 'travel-guide');
 
 -- 4. Content Statuses
 CREATE TABLE IF NOT EXISTS content_statuses (

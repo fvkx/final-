@@ -33,8 +33,19 @@ export function Users() {
   }, []);
 
   useEffect(() => {
+    document.title = 'User Management | Balingasag CMS';
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showModal) {
+        setShowModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showModal]);
 
   const handleDelete = async (id: number) => {
     const confirmed = await confirm(
@@ -116,7 +127,7 @@ export function Users() {
                 <td className="px-6 py-4 text-gray-400 text-xs font-medium">
                   {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </td>
-                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                <td className="px-6 py-4 text-right md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity">
                   <button
                     onClick={() => handleDelete(user.id)}
                     className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
@@ -132,8 +143,12 @@ export function Users() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+            onClick={() => setShowModal(false)} 
+          />
+          <div className="relative bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-200">
             <h2 className="text-xl font-bold mb-6">Create New User</h2>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>

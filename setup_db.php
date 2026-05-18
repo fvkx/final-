@@ -6,7 +6,7 @@
  * It creates the database, all tables, and seeds lookup/default data.
  */
 $host = '127.0.0.1';
-$port = '3307';
+$port = '3306';
 $user = 'root';
 $pass = '';
 

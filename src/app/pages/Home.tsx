@@ -70,6 +70,7 @@ export function Home() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Balingasag Tourism Guide | Discover Balingasag';
     fetchContent();
   }, []);
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { MapPin, Navigation, Bus, Car, Clock, Info } from 'lucide-react';
 
 const landmarks = [
@@ -26,11 +27,11 @@ const directions = [
     from: 'From Cagayan de Oro City (via Private Vehicle)',
     icon: Car,
     steps: [
-      'From CDO, take the Cagayan-Iligan City Highway (N1) heading east.',
-      'Pass through Opol, then El Salvador City.',
-      'Continue past Alubijid, then Laguindingan.',
-      'Proceed to Gitagum, then turn right at the Balingasag junction.',
-      'Follow the road to Balingasag town proper.',
+      'From CDO, take the Butuan-Cagayan de Oro-Iligan Road (national highway) heading east.',
+      'Pass through the eastern barangays of CDO (Gusa, Cugman, Tablon, Bugo).',
+      'Continue past the municipalities of Tagoloan and Villanueva.',
+      'Pass through the municipality of Jasaan.',
+      'Continue straight along the well-paved coastal national highway until you reach Balingasag town proper.',
       'Total drive time: approximately 1 hour in light traffic.',
       'Google Maps: Search "Balingasag, Misamis Oriental"'
     ]
@@ -60,6 +61,10 @@ const directions = [
 ];
 
 export function MapPage() {
+  useEffect(() => {
+    document.title = 'Map & Directions | Balingasag Tourism Guide';
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Header */}

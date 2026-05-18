@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Globe, FileText, Layout, ChevronRight, Search, Filter } from 'lucide-react';
+import { Plus, Edit2, Trash2, Globe, FileText, Layout, ChevronRight, Search, Filter, X } from 'lucide-react';
 import { contentApi } from '../../lib/adminApi';
 import { Link } from 'react-router-dom';
 import { AdminSkeletonList } from '../../components/SkeletonCard';
@@ -21,6 +21,7 @@ export function ContentManager() {
   const { confirm, toast } = useNotifications();
 
   useEffect(() => {
+    document.title = 'Content Management | Balingasag CMS';
     fetchPages();
   }, []);
 
@@ -85,10 +86,19 @@ export function ContentManager() {
           <input
             type="text"
             placeholder="Search pages..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-100 focus:border-emerald-200 outline-none transition-all"
+            className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-100 focus:border-emerald-200 outline-none transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 p-0.5 rounded-full hover:bg-gray-50 transition-colors"
+              title="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
         <div className="relative">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -141,7 +151,7 @@ export function ContentManager() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                  <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-all transform translate-x-0 md:translate-x-2 md:group-hover:translate-x-0">
                     <Link
                       to={`/admin/content/edit/${page.id}`}
                       className="p-2.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"

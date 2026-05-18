@@ -35,8 +35,22 @@ export function Inquiries() {
   }, [filter]);
 
   useEffect(() => {
+    document.title = 'Inquiries Management | Balingasag CMS';
+  }, []);
+
+  useEffect(() => {
     fetchInquiries();
   }, [filter]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedInquiry) {
+        setSelectedInquiry(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedInquiry]);
 
   const handleStatusChange = async (id: number, status: string) => {
     try {
@@ -136,7 +150,7 @@ export function Inquiries() {
                 <td className="px-6 py-4 text-gray-400 text-xs font-medium">
                   {new Date(inquiry.date_submitted).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </td>
-                <td className="px-6 py-4 text-right space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <td className="px-6 py-4 text-right space-x-1 md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity">
                   <button
                     onClick={() => openInquiry(inquiry)}
                     className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
@@ -166,8 +180,12 @@ export function Inquiries() {
       </div>
 
       {selectedInquiry && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+            onClick={() => setSelectedInquiry(null)} 
+          />
+          <div className="relative bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">{selectedInquiry.subject}</h2>

@@ -11,6 +11,7 @@ export function TravelGuidePage() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Travel Guide | Balingasag Practical Visitor Info';
     fetchGuides();
   }, []);
 

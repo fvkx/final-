@@ -14,6 +14,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'Dashboard | Balingasag CMS';
     const fetchStats = async () => {
       try {
         const res = await dashboardApi.getStats();

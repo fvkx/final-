@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../lib/adminApi';
 import { Lock, User, Globe } from 'lucide-react';
@@ -9,6 +9,10 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Sign In | Balingasag CMS';
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -12,6 +12,7 @@ export function EventsPage() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Events & Festivals | Balingasag Tourism Guide';
     fetchEvents();
   }, []);
 

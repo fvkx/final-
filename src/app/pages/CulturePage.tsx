@@ -12,6 +12,7 @@ export function CulturePage() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Culture & Heritage | Balingasag Tourism Guide';
     fetchPages();
   }, []);
 
