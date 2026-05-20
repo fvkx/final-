@@ -27,9 +27,20 @@ function generateToken($payload) {
 
 function verifyToken() {
     global $SECRET_KEY;
-    $headers = apache_request_headers();
+    // Robust header detection for Authorization
+    if (function_exists('apache_request_headers')) {
+        $headers = apache_request_headers();
+    } else {
+        $headers = [];
+        foreach ($_SERVER as $key => $value) {
+            if (substr($key, 0, 5) == 'HTTP_') {
+                $header = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+                $headers[$header] = $value;
+            }
+        }
+    }
     $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-    
+    // Fallback for some CGI/FastCGI setups
     if (empty($authHeader) && isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
     }
@@ -97,13 +108,13 @@ if (basename($_SERVER['SCRIPT_FILENAME']) == 'auth.php') {
                 SELECT u.*, r.role_name as role 
                 FROM users u 
                 JOIN roles r ON u.role_id = r.id 
-                WHERE u.username = :username
+                WHERE u.username = :username OR u.email = :username
             ");
         } else {
             $stmt = $db->prepare("
                 SELECT u.*
                 FROM users u 
-                WHERE u.username = :username
+                WHERE u.username = :username OR u.email = :username
             ");
         }
         $stmt->execute([':username' => $username]);

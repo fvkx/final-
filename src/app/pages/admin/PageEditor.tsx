@@ -45,6 +45,75 @@ export function PageEditor() {
     }
   }, [id, isNew]);
 
+  const ensureTravelGuideSections = (currentSections: any[], pageTitle: string = '') => {
+    const finalSections = [...currentSections];
+    const requiredTypes = ['travel_hero', 'travel_planner', 'travel_transport', 'travel_directory', 'travel_tips', 'rich_text'];
+    
+    let changed = false;
+    requiredTypes.forEach(type => {
+      if (!finalSections.some(s => s.type === type)) {
+        changed = true;
+        const newSec: any = { type, data: {} };
+        if (type === 'travel_hero') {
+          newSec.data = { 
+            title: pageTitle || page.title || '', 
+            subtitle: page.description || '', 
+            imageUrl: page.image_url || '', 
+            authorName: 'Balingasag Tourism Office', 
+            authorRole: 'Tourism Specialist', 
+            authorAvatar: '', 
+            readTime: '5 min read' 
+          };
+        } else if (type === 'travel_planner') {
+          newSec.data = { 
+            budget: '₱500 - ₱1,500 / day', 
+            season: 'November to May', 
+            duration: '2 Days, 1 Night', 
+            idealFor: 'Families & Friends' 
+          };
+        } else if (type === 'travel_transport') {
+          newSec.data = { 
+            options: [
+              { method: 'Bus', from: 'Cagayan de Oro (Agora)', duration: '1.5 - 2 hours', description: 'Take a CDO-Gingoog bus at Agora terminal. Alight at Balingasag town center.', icon: 'bus' }
+            ] 
+          };
+        } else if (type === 'travel_directory') {
+          newSec.data = {
+            accommodations: [
+              { name: 'Balingasag Guesthouse', type: 'Guesthouse', description: 'Affordable, clean rooms near the municipal plaza.' }
+            ],
+            restaurants: [
+              { name: 'Macajalar Seafoods', specialty: 'Sutukil (Sugba, Tuwa, Kilaw)', description: 'Fresh open-air dining along the bay.' }
+            ]
+          };
+        } else if (type === 'travel_tips') {
+          newSec.data = {
+            tips: [
+              { category: 'Best Season', title: 'Plan for Sunny Weather', tip: 'November to May is the dry season, perfect for beaching and mountain trekking.', icon: 'cloudSun' },
+              { category: 'Budget', title: 'Bring Philippine Cash (PHP)', tip: 'Local markets and jeepney drivers only accept cash. ATMs are available in town.', icon: 'dollarSign' }
+            ]
+          };
+        } else if (type === 'rich_text') {
+          newSec.data = { 
+            body: 'Welcome to Balingasag! This is where you can write custom detailed information, local history, or specific guidelines for visitors.' 
+          };
+        }
+        finalSections.push(newSec);
+      }
+    });
+
+    if (changed) {
+      // Sort them in the standard reading sequence for travel guides
+      const sorted = finalSections.sort((a, b) => {
+        const orderA = requiredTypes.indexOf(a.type);
+        const orderB = requiredTypes.indexOf(b.type);
+        return (orderA !== -1 ? orderA : 99) - (orderB !== -1 ? orderB : 99);
+      });
+      return { sections: sorted, changed: true };
+    }
+    return { sections: finalSections, changed: false };
+  };
+
   const fetchPage = async () => {
     const pageId = Number(id);
     if (isNaN(pageId)) {
@@ -56,13 +125,62 @@ export function PageEditor() {
       const response = await contentApi.getById(pageId);
       if (response.success) {
         setPage(response.data);
-        setSections(response.data.sections || []);
+        let loadedSections = response.data.sections || [];
+        if (response.data.category === 'travel-guide') {
+          const res = ensureTravelGuideSections(loadedSections, response.data.title);
+          loadedSections = res.sections;
+        }
+        setSections(loadedSections);
         document.title = `Edit Page: ${response.data.title} | Balingasag CMS`;
       }
     } catch (error) {
       console.error('Failed to fetch page:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getSectionIndex = (type: string) => sections.findIndex(s => s.type === type);
+
+  const updateTravelHero = (newData: any) => {
+    const idx = getSectionIndex('travel_hero');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
+    }
+  };
+
+  const updateTravelPlanner = (newData: any) => {
+    const idx = getSectionIndex('travel_planner');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
+    }
+  };
+
+  const updateTravelTransport = (newData: any) => {
+    const idx = getSectionIndex('travel_transport');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
+    }
+  };
+
+  const updateTravelDirectory = (newData: any) => {
+    const idx = getSectionIndex('travel_directory');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
+    }
+  };
+
+  const updateTravelTips = (newData: any) => {
+    const idx = getSectionIndex('travel_tips');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
+    }
+  };
+
+  const updateTravelRichText = (newData: any) => {
+    const idx = getSectionIndex('rich_text');
+    if (idx !== -1) {
+      updateSectionData(idx, newData);
     }
   };
 
@@ -204,192 +322,867 @@ export function PageEditor() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Editor */}
         <div className="lg:col-span-2 space-y-6">
-          {sections.map((section, idx) => (
-            <div key={idx} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-              {/* Section Header */}
-              <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-white rounded shadow-sm">
-                    {(() => {
-                      const Icon = SECTION_TYPES.find(t => t.id === section.type)?.icon || Type;
-                      return <Icon className="w-4 h-4 text-emerald-600" />;
-                    })()}
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{section.type}</span>
+          {page.category === 'travel-guide' ? (
+            <div className="space-y-6">
+              {/* Premium Mode Notification Banner */}
+              <div className="bg-gradient-to-r from-emerald-800 to-teal-800 rounded-2xl p-6 text-white shadow-md flex items-center justify-between">
+                <div>
+                  <h3 className="font-extrabold text-lg flex items-center gap-2">
+                    <span className="text-xl">🌴</span> Premium Travel Guide Builder Active
+                  </h3>
+                  <p className="text-emerald-100 text-sm mt-1">
+                    Design a premium, structured travel guide for Balingasag. Fill in the custom details below.
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
-                    <ChevronUp className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => moveSection(idx, 'down')} disabled={idx === sections.length - 1} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => removeSection(idx)} className="p-1 text-gray-400 hover:text-red-600 ml-1">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div className="hidden md:flex px-4 py-2 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold uppercase tracking-wider border border-white/10">
+                  Form Mode
                 </div>
               </div>
 
-              {/* Section Content */}
-              <div className="p-5">
-                {section.type === 'banner' && (
-                  <div className="space-y-4">
-                    <div className="flex gap-4">
-                      <div className="flex-1 space-y-4">
-                        <input
-                          type="text"
-                          placeholder="Headline (Title)"
-                          className="w-full text-lg font-bold border-b focus:border-teal-500 outline-none pb-1"
-                          value={section.data.title || ''}
-                          onChange={(e) => updateSectionData(idx, { title: e.target.value })}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Subheadline"
-                          className="w-full text-gray-500 border-b focus:border-teal-500 outline-none pb-1"
-                          value={section.data.subtitle || ''}
-                          onChange={(e) => updateSectionData(idx, { subtitle: e.target.value })}
-                        />
+              {/* 1. Hero & Author Card */}
+              {(() => {
+                const idx = getSectionIndex('travel_hero');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                        <ImageIcon className="w-4 h-4" />
                       </div>
-                      <div className="w-32 h-20 bg-gray-100 rounded-lg overflow-hidden relative group">
-                        {uploadingSectionIdx === idx ? (
-                          <div className="flex flex-col items-center justify-center h-full bg-emerald-50 text-emerald-600">
-                            <Loader2 className="w-6 h-6 animate-spin mb-1" />
-                            <span className="text-[9px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
+                      <h3 className="font-bold text-gray-800">1. Guide Cover & Author Info</h3>
+                    </div>
+                    <div className="p-5 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Headline / Banner Title</label>
+                          <input 
+                            type="text" 
+                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            placeholder="e.g. Balingasag Practical Visitor Info"
+                            value={data.title || ''}
+                            onChange={(e) => updateTravelHero({ title: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Subheadline / Intro Text</label>
+                          <input 
+                            type="text" 
+                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            placeholder="e.g. Everything you need to plan a smooth trip"
+                            value={data.subtitle || ''}
+                            onChange={(e) => updateTravelHero({ subtitle: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Author Name</label>
+                          <input 
+                            type="text" 
+                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            value={data.authorName || ''}
+                            onChange={(e) => updateTravelHero({ authorName: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Author Title / Role</label>
+                          <input 
+                            type="text" 
+                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            value={data.authorRole || ''}
+                            onChange={(e) => updateTravelHero({ authorRole: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Read Time Estimate</label>
+                          <input 
+                            type="text" 
+                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            placeholder="e.g. 5 min read"
+                            value={data.readTime || ''}
+                            onChange={(e) => updateTravelHero({ readTime: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Image Upload for Hero Cover */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cover Background Image</label>
+                          <div className="flex gap-4 items-center">
+                            <div className="w-24 h-16 bg-gray-50 border rounded-xl overflow-hidden shrink-0 relative group">
+                              {uploadingSectionIdx === idx ? (
+                                <div className="absolute inset-0 bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                </div>
+                              ) : data.imageUrl ? (
+                                <img src={data.imageUrl} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-300"><ImageIcon className="w-5 h-5" /></div>
+                              )}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg cursor-pointer transition-all border border-emerald-100/50">
+                                <Upload className="w-3.5 h-3.5" /> Upload Cover Image
+                                <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0])} />
+                              </label>
+                              <p className="text-[10px] text-gray-400 leading-none">Landscape layout recommended.</p>
+                            </div>
                           </div>
-                        ) : (
-                          <>
-                            {section.data.imageUrl ? (
-                              <img src={section.data.imageUrl} className="w-full h-full object-cover" />
-                            ) : (
-                              <div className="flex items-center justify-center h-full text-gray-400"><ImageIcon className="w-6 h-6" /></div>
-                            )}
-                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                              <Upload className="w-5 h-5 text-white" />
-                              <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0])} />
-                            </label>
-                          </>
-                        )}
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Author Avatar (Optional)</label>
+                          <div className="flex gap-4 items-center">
+                            <div className="w-16 h-16 bg-gray-50 border rounded-full overflow-hidden shrink-0 relative group">
+                              {uploadingSectionIdx === 9999 ? (
+                                <div className="absolute inset-0 bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                </div>
+                              ) : data.authorAvatar ? (
+                                <img src={data.authorAvatar} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold text-lg">
+                                  {(data.authorName || 'T')[0].toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg cursor-pointer transition-all border border-emerald-100/50">
+                                <Upload className="w-3.5 h-3.5" /> Upload Avatar
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  onChange={async (e) => {
+                                    if (e.target.files?.[0]) {
+                                      setUploadingSectionIdx(9999);
+                                      setIsDirty(true);
+                                      try {
+                                        const res = await mediaApi.upload(e.target.files[0]);
+                                        if (res.success) {
+                                          updateTravelHero({ authorAvatar: res.url });
+                                        } else {
+                                          toast('Avatar upload failed: ' + res.message, 'error');
+                                        }
+                                      } catch (err: any) {
+                                        toast('Avatar upload failed: ' + err.message, 'error');
+                                      } finally {
+                                        setUploadingSectionIdx(null);
+                                      }
+                                    }
+                                  }} 
+                                />
+                              </label>
+                              <p className="text-[10px] text-gray-400 leading-none">Square layout recommended.</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )}
+                );
+              })()}
 
-                {(section.type === 'text' || section.type === 'rich_text') && (
-                  <textarea
-                    rows={6}
-                    placeholder="Write your content here..."
-                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-teal-100 border border-transparent focus:border-teal-100 transition-all resize-none"
-                    value={section.data.body || ''}
-                    onChange={(e) => updateSectionData(idx, { body: e.target.value })}
-                  />
-                )}
-
-                {section.type === 'gallery' && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 text-sm mb-2">
-                      <span className="font-semibold">Layout:</span>
-                      <button 
-                        onClick={() => updateSectionData(idx, { layout: 'grid' })}
-                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'grid' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
-                      >Standard Grid</button>
-                      <button 
-                        onClick={() => updateSectionData(idx, { layout: 'bento' })}
-                        className={`px-3 py-1 rounded-full border ${section.data.layout === 'bento' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
-                      >Bento Layout</button>
+              {/* 2. Quick Travel Planner Specs */}
+              {(() => {
+                const idx = getSectionIndex('travel_planner');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                        <Settings className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-bold text-gray-800">2. Quick Travel Planner Specs</h3>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {(section.data.images || []).map((img: string, imgIdx: number) => (
-                        <div key={imgIdx} className="w-20 h-20 rounded-lg overflow-hidden relative group">
-                          <img src={img} className="w-full h-full object-cover" />
-                          <button 
-                            onClick={() => {
-                              const imgs = [...section.data.images];
-                              imgs.splice(imgIdx, 1);
-                              updateSectionData(idx, { images: imgs });
-                            }}
-                            className="absolute inset-0 bg-red-600/60 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                          ><Trash2 className="w-4 h-4" /></button>
+                    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Estimated Budget</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          placeholder="e.g. ₱500 - ₱1,500 / day"
+                          value={data.budget || ''}
+                          onChange={(e) => updateTravelPlanner({ budget: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Best Season / Time to Visit</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          placeholder="e.g. November to May"
+                          value={data.season || ''}
+                          onChange={(e) => updateTravelPlanner({ season: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Recommended Duration</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          placeholder="e.g. 2 Days, 1 Night"
+                          value={data.duration || ''}
+                          onChange={(e) => updateTravelPlanner({ duration: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Ideal For</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          placeholder="e.g. Families, Friends, Couples"
+                          value={data.idealFor || ''}
+                          onChange={(e) => updateTravelPlanner({ idealFor: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 3. Transportation Guide */}
+              {(() => {
+                const idx = getSectionIndex('travel_transport');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                const options = data.options || [];
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2m-4-3H9M7 16h.01M17 16h.01" /></svg>
                         </div>
-                      ))}
-                      {uploadingSectionIdx === idx ? (
-                        <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-lg border-2 border-dashed border-emerald-200 flex flex-col items-center justify-center">
-                          <Loader2 className="w-5 h-5 animate-spin mb-1" />
-                          <span className="text-[8px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
-                        </div>
+                        <h3 className="font-bold text-gray-800">3. Transportation & Routes</h3>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const newOpts = [...options, { method: 'Bus', from: '', duration: '', description: '', icon: 'bus' }];
+                          updateTravelTransport({ options: newOpts });
+                        }}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add Route
+                      </button>
+                    </div>
+                    <div className="p-5 space-y-4">
+                      {options.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center py-4">No transportation routes added. Click "Add Route" to begin.</p>
                       ) : (
-                        <label className="w-20 h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition-all">
-                          <Plus className="w-5 h-5 text-gray-400" />
-                          <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0], 'images')} />
-                        </label>
+                        options.map((opt: any, optIdx: number) => (
+                          <div key={optIdx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 relative group space-y-3">
+                            <button 
+                              onClick={() => {
+                                const newOpts = [...options];
+                                newOpts.splice(optIdx, 1);
+                                updateTravelTransport({ options: newOpts });
+                              }}
+                              className="absolute top-4 right-4 p-1 text-gray-400 hover:text-red-600 transition-colors"
+                              title="Delete route"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div>
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">From / Starting Location</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. Cagayan de Oro City"
+                                  value={opt.from || ''}
+                                  onChange={(e) => {
+                                    const newOpts = [...options];
+                                    newOpts[optIdx] = { ...newOpts[optIdx], from: e.target.value };
+                                    updateTravelTransport({ options: newOpts });
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Transit Method & Icon</label>
+                                <div className="flex gap-2">
+                                  <input 
+                                    type="text" 
+                                    className="flex-1 p-2 bg-white border rounded-lg outline-none text-xs" 
+                                    placeholder="e.g. Bus / Minibus"
+                                    value={opt.method || ''}
+                                    onChange={(e) => {
+                                      const newOpts = [...options];
+                                      newOpts[optIdx] = { ...newOpts[optIdx], method: e.target.value };
+                                      updateTravelTransport({ options: newOpts });
+                                    }}
+                                  />
+                                  <select 
+                                    className="p-2 bg-white border rounded-lg outline-none text-xs"
+                                    value={opt.icon || 'bus'}
+                                    onChange={(e) => {
+                                      const newOpts = [...options];
+                                      newOpts[optIdx] = { ...newOpts[optIdx], icon: e.target.value };
+                                      updateTravelTransport({ options: newOpts });
+                                    }}
+                                  >
+                                    <option value="bus">Bus Icon</option>
+                                    <option value="car">Car Icon</option>
+                                    <option value="plane">Plane Icon</option>
+                                    <option value="other">Info Icon</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="w-[85%] md:w-full">
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Trip Duration</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. 1.5 – 2 hours"
+                                  value={opt.duration || ''}
+                                  onChange={(e) => {
+                                    const newOpts = [...options];
+                                    newOpts[optIdx] = { ...newOpts[optIdx], duration: e.target.value };
+                                    updateTravelTransport({ options: newOpts });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Detailed Description & Cost Details</label>
+                              <textarea 
+                                rows={2}
+                                className="w-full p-2 bg-white border rounded-lg outline-none text-xs resize-none" 
+                                placeholder="Describe transit steps, fare costs, departure frequencies, and drop-off points..."
+                                value={opt.description || ''}
+                                onChange={(e) => {
+                                  const newOpts = [...options];
+                                  newOpts[optIdx] = { ...newOpts[optIdx], description: e.target.value };
+                                  updateTravelTransport({ options: newOpts });
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))
                       )}
                     </div>
                   </div>
-                )}
+                );
+              })()}
 
-                {section.type === 'facts' && (
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      placeholder="Title (e.g. Highlights)"
-                      className="w-full font-bold border-b outline-none pb-1"
-                      value={section.data.title || ''}
-                      onChange={(e) => updateSectionData(idx, { title: e.target.value })}
-                    />
-                    <div className="space-y-2">
-                      {(section.data.items || []).map((item: string, itemIdx: number) => (
-                        <div key={itemIdx} className="flex gap-2">
-                          <input
-                            type="text"
-                            className="flex-1 p-2 bg-gray-50 rounded-lg text-sm"
-                            value={item}
-                            onChange={(e) => {
-                              const items = [...section.data.items];
-                              items[itemIdx] = e.target.value;
-                              updateSectionData(idx, { items });
+              {/* 4. Directory Lodging & Dining */}
+              {(() => {
+                const idx = getSectionIndex('travel_directory');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                const accommodations = data.accommodations || [];
+                const restaurants = data.restaurants || [];
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                        <LayoutGrid className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-bold text-gray-800">4. Lodging & Dining Directory</h3>
+                    </div>
+                    <div className="p-5 space-y-6">
+                      
+                      {/* Accommodations */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2 border-gray-100">
+                          <h4 className="text-xs font-extrabold uppercase tracking-widest text-teal-700">🏢 Recommended Places to Stay</h4>
+                          <button 
+                            onClick={() => {
+                              const newAccs = [...accommodations, { name: '', type: 'Hotel', description: '' }];
+                              updateTravelDirectory({ accommodations: newAccs, restaurants });
                             }}
-                          />
-                          <button onClick={() => {
-                            const items = [...section.data.items];
-                            items.splice(itemIdx, 1);
-                            updateSectionData(idx, { items });
-                          }} className="text-gray-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                            className="inline-flex items-center gap-0.5 text-[10px] font-bold text-teal-600 hover:text-teal-700 hover:underline"
+                          >
+                            <Plus className="w-3 h-3" /> Add Lodging
+                          </button>
                         </div>
-                      ))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {accommodations.map((acc: any, accIdx: number) => (
+                            <div key={accIdx} className="p-3 bg-teal-50/20 border border-teal-100/40 rounded-xl relative space-y-2">
+                              <button 
+                                onClick={() => {
+                                  const newAccs = [...accommodations];
+                                  newAccs.splice(accIdx, 1);
+                                  updateTravelDirectory({ accommodations: newAccs, restaurants });
+                                }}
+                                className="absolute top-2 right-2 text-teal-400 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                              <div className="w-[85%] md:w-full">
+                                <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Place Name</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. Balingasag Beach Resort"
+                                  value={acc.name || ''}
+                                  onChange={(e) => {
+                                    const newAccs = [...accommodations];
+                                    newAccs[accIdx] = { ...newAccs[accIdx], name: e.target.value };
+                                    updateTravelDirectory({ accommodations: newAccs, restaurants });
+                                  }}
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="col-span-2">
+                                  <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Lodging Type</label>
+                                  <input 
+                                    type="text" 
+                                    className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs" 
+                                    placeholder="e.g. Resort / Guesthouse"
+                                    value={acc.type || ''}
+                                    onChange={(e) => {
+                                      const newAccs = [...accommodations];
+                                      newAccs[accIdx] = { ...newAccs[accIdx], type: e.target.value };
+                                      updateTravelDirectory({ accommodations: newAccs, restaurants });
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Quick Description & Amenities</label>
+                                <textarea 
+                                  rows={2}
+                                  className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs resize-none" 
+                                  placeholder="Describe room rates, pool, beachfront access, contact info..."
+                                  value={acc.description || ''}
+                                  onChange={(e) => {
+                                    const newAccs = [...accommodations];
+                                    newAccs[accIdx] = { ...newAccs[accIdx], description: e.target.value };
+                                    updateTravelDirectory({ accommodations: newAccs, restaurants });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Dining */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2 border-gray-100 pt-2">
+                          <h4 className="text-xs font-extrabold uppercase tracking-widest text-orange-700">🍽️ Recommended Dining Options</h4>
+                          <button 
+                            onClick={() => {
+                              const newRests = [...restaurants, { name: '', specialty: 'Local Dishes', description: '' }];
+                              updateTravelDirectory({ accommodations, restaurants: newRests });
+                            }}
+                            className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-600 hover:text-orange-700 hover:underline"
+                          >
+                            <Plus className="w-3 h-3" /> Add Dining
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {restaurants.map((rest: any, restIdx: number) => (
+                            <div key={restIdx} className="p-3 bg-orange-50/20 border border-orange-100/40 rounded-xl relative space-y-2">
+                              <button 
+                                onClick={() => {
+                                  const newRests = [...restaurants];
+                                  newRests.splice(restIdx, 1);
+                                  updateTravelDirectory({ accommodations, restaurants: newRests });
+                                }}
+                                className="absolute top-2 right-2 text-orange-400 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                              <div className="w-[85%] md:w-full">
+                                <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Diner Name</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. Bayside Seafood Eateries"
+                                  value={rest.name || ''}
+                                  onChange={(e) => {
+                                    const newRests = [...restaurants];
+                                    newRests[restIdx] = { ...newRests[restIdx], name: e.target.value };
+                                    updateTravelDirectory({ accommodations, restaurants: newRests });
+                                  }}
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="col-span-2">
+                                  <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Specialty Dish / Vibe</label>
+                                  <input 
+                                    type="text" 
+                                    className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs" 
+                                    placeholder="e.g. Fresh Grilled Seafood"
+                                    value={rest.specialty || ''}
+                                    onChange={(e) => {
+                                      const newRests = [...restaurants];
+                                      newRests[restIdx] = { ...newRests[restIdx], specialty: e.target.value };
+                                      updateTravelDirectory({ accommodations, restaurants: newRests });
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Food Description & Price</label>
+                                <textarea 
+                                  rows={2}
+                                  className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs resize-none" 
+                                  placeholder="Describe native delicacies, pricing, location, opening hours..."
+                                  value={rest.description || ''}
+                                  onChange={(e) => {
+                                    const newRests = [...restaurants];
+                                    newRests[restIdx] = { ...newRests[restIdx], description: e.target.value };
+                                    updateTravelDirectory({ accommodations, restaurants: newRests });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 5. Essential Local Travel Tips */}
+              {(() => {
+                const idx = getSectionIndex('travel_tips');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                const tips = data.tips || [];
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                          <ListChecks className="w-4 h-4" />
+                        </div>
+                        <h3 className="font-bold text-gray-800">5. Essential Tips & Guidelines</h3>
+                      </div>
                       <button 
-                        onClick={() => updateSectionData(idx, { items: [...(section.data.items || []), ''] })}
-                        className="text-xs font-semibold text-teal-600 flex items-center gap-1 hover:underline"
+                        onClick={() => {
+                          const newTips = [...tips, { category: 'Safety', title: '', tip: '', icon: 'shield' }];
+                          updateTravelTips({ tips: newTips });
+                        }}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline"
                       >
-                        <Plus className="w-3 h-3" /> Add Highlight
+                        <Plus className="w-3.5 h-3.5" /> Add Tip
+                      </button>
+                    </div>
+                    <div className="p-5 space-y-4">
+                      {tips.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center py-4">No travel tips added yet. Click "Add Tip" to create one.</p>
+                      ) : (
+                        tips.map((tip: any, tipIdx: number) => (
+                          <div key={tipIdx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 relative group space-y-3">
+                            <button 
+                              onClick={() => {
+                                const newTips = [...tips];
+                                newTips.splice(tipIdx, 1);
+                                updateTravelTips({ tips: newTips });
+                              }}
+                              className="absolute top-4 right-4 p-1 text-gray-400 hover:text-red-600 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div>
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Category / Category Badge</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. Eco-Tourism"
+                                  value={tip.category || ''}
+                                  onChange={(e) => {
+                                    const newTips = [...tips];
+                                    newTips[tipIdx] = { ...newTips[tipIdx], category: e.target.value };
+                                    updateTravelTips({ tips: newTips });
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Headline Title</label>
+                                <input 
+                                  type="text" 
+                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  placeholder="e.g. Keep local areas clean"
+                                  value={tip.title || ''}
+                                  onChange={(e) => {
+                                    const newTips = [...tips];
+                                    newTips[tipIdx] = { ...newTips[tipIdx], title: e.target.value };
+                                    updateTravelTips({ tips: newTips });
+                                  }}
+                                />
+                              </div>
+                              <div className="w-[85%] md:w-full">
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Icon Theme</label>
+                                <select 
+                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs"
+                                  value={tip.icon || 'info'}
+                                  onChange={(e) => {
+                                    const newTips = [...tips];
+                                    newTips[tipIdx] = { ...newTips[tipIdx], icon: e.target.value };
+                                    updateTravelTips({ tips: newTips });
+                                  }}
+                                >
+                                  <option value="cloudSun">Sun & Cloud (Season)</option>
+                                  <option value="shirt">Clothes (What to bring)</option>
+                                  <option value="dollarSign">Dollar/Cash (Budget)</option>
+                                  <option value="heart">Heart (Respect/Culture)</option>
+                                  <option value="leaf">Leaf (Eco/Nature)</option>
+                                  <option value="shield">Shield (Safety)</option>
+                                  <option value="info">Info Circle (General)</option>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Body Paragraph</label>
+                              <textarea 
+                                rows={2}
+                                className="w-full p-2 bg-white border rounded-lg outline-none text-xs resize-none" 
+                                placeholder="Explain this custom recommendation in detail..."
+                                value={tip.tip || ''}
+                                onChange={(e) => {
+                                  const newTips = [...tips];
+                                  newTips[tipIdx] = { ...newTips[tipIdx], tip: e.target.value };
+                                  updateTravelTips({ tips: newTips });
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 6. Itinerary & General Content */}
+              {(() => {
+                const idx = getSectionIndex('rich_text');
+                if (idx === -1) return null;
+                const section = sections[idx];
+                const data = section.data || {};
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+                        <Type className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-bold text-gray-800">6. Detailed Itinerary & Notes</h3>
+                    </div>
+                    <div className="p-5">
+                      <textarea
+                        rows={10}
+                        placeholder="Write your custom detailed itinerary or other paragraphs here..."
+                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-teal-100 border border-transparent focus:border-teal-100 transition-all resize-y text-sm leading-relaxed"
+                        value={data.body || ''}
+                        onChange={(e) => updateTravelRichText({ body: e.target.value })}
+                      />
+                      <p className="text-[10px] text-gray-400 mt-1">This uses markdown paragraphs or standard rich-text lines.</p>
+                    </div>
+                  </div>
+                );
+              })()}
+
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {sections.map((section, idx) => (
+                <div key={idx} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                  {/* Section Header */}
+                  <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-white rounded shadow-sm">
+                        {(() => {
+                          const Icon = SECTION_TYPES.find(t => t.id === section.type)?.icon || Type;
+                          return <Icon className="w-4 h-4 text-emerald-600" />;
+                        })()}
+                      </div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{section.type}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => moveSection(idx, 'down')} disabled={idx === sections.length - 1} className="p-1 text-gray-400 hover:text-emerald-600 disabled:opacity-30">
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => removeSection(idx)} className="p-1 text-gray-400 hover:text-red-600 ml-1">
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                )}
+
+                  {/* Section Content */}
+                  <div className="p-5">
+                    {section.type === 'banner' && (
+                      <div className="space-y-4">
+                        <div className="flex gap-4">
+                          <div className="flex-1 space-y-4">
+                            <input
+                              type="text"
+                              placeholder="Headline (Title)"
+                              className="w-full text-lg font-bold border-b focus:border-teal-500 outline-none pb-1"
+                              value={section.data.title || ''}
+                              onChange={(e) => updateSectionData(idx, { title: e.target.value })}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Subheadline"
+                              className="w-full text-gray-500 border-b focus:border-teal-500 outline-none pb-1"
+                              value={section.data.subtitle || ''}
+                              onChange={(e) => updateSectionData(idx, { subtitle: e.target.value })}
+                            />
+                          </div>
+                          <div className="w-32 h-20 bg-gray-100 rounded-lg overflow-hidden relative group">
+                            {uploadingSectionIdx === idx ? (
+                              <div className="flex flex-col items-center justify-center h-full bg-emerald-50 text-emerald-600">
+                                <Loader2 className="w-6 h-6 animate-spin mb-1" />
+                                <span className="text-[9px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
+                              </div>
+                            ) : (
+                              <>
+                                {section.data.imageUrl ? (
+                                  <img src={section.data.imageUrl} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="flex items-center justify-center h-full text-gray-400"><ImageIcon className="w-6 h-6" /></div>
+                                )}
+                                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                                  <Upload className="w-5 h-5 text-white" />
+                                  <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0])} />
+                                </label>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {(section.type === 'text' || section.type === 'rich_text') && (
+                      <textarea
+                        rows={6}
+                        placeholder="Write your content here..."
+                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-teal-100 border border-transparent focus:border-teal-100 transition-all resize-none"
+                        value={section.data.body || ''}
+                        onChange={(e) => updateSectionData(idx, { body: e.target.value })}
+                      />
+                    )}
+
+                    {section.type === 'gallery' && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4 text-sm mb-2">
+                          <span className="font-semibold">Layout:</span>
+                          <button 
+                            onClick={() => updateSectionData(idx, { layout: 'grid' })}
+                            className={`px-3 py-1 rounded-full border ${section.data.layout === 'grid' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
+                          >Standard Grid</button>
+                          <button 
+                            onClick={() => updateSectionData(idx, { layout: 'bento' })}
+                            className={`px-3 py-1 rounded-full border ${section.data.layout === 'bento' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-200 text-gray-500'}`}
+                          >Bento Layout</button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {(section.data.images || []).map((img: string, imgIdx: number) => (
+                            <div key={imgIdx} className="w-20 h-20 rounded-lg overflow-hidden relative group">
+                              <img src={img} className="w-full h-full object-cover" />
+                              <button 
+                                onClick={() => {
+                                  const imgs = [...section.data.images];
+                                  imgs.splice(imgIdx, 1);
+                                  updateSectionData(idx, { images: imgs });
+                                }}
+                                className="absolute inset-0 bg-red-600/60 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                              ><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          ))}
+                          {uploadingSectionIdx === idx ? (
+                            <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-lg border-2 border-dashed border-emerald-200 flex flex-col items-center justify-center">
+                              <Loader2 className="w-5 h-5 animate-spin mb-1" />
+                              <span className="text-[8px] font-bold uppercase tracking-wider animate-pulse">Uploading</span>
+                            </div>
+                          ) : (
+                            <label className="w-20 h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition-all">
+                              <Plus className="w-5 h-5 text-gray-400" />
+                              <input type="file" className="hidden" onChange={(e) => e.target.files && handleFileUpload(idx, e.target.files[0], 'images')} />
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {section.type === 'facts' && (
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          placeholder="Title (e.g. Highlights)"
+                          className="w-full font-bold border-b outline-none pb-1"
+                          value={section.data.title || ''}
+                          onChange={(e) => updateSectionData(idx, { title: e.target.value })}
+                        />
+                        <div className="space-y-2">
+                          {(section.data.items || []).map((item: string, itemIdx: number) => (
+                            <div key={itemIdx} className="flex gap-2">
+                              <input
+                                type="text"
+                                className="flex-1 p-2 bg-gray-50 rounded-lg text-sm"
+                                value={item}
+                                onChange={(e) => {
+                                  const items = [...section.data.items];
+                                  items[itemIdx] = e.target.value;
+                                  updateSectionData(idx, { items });
+                                }}
+                              />
+                              <button onClick={() => {
+                                const items = [...section.data.items];
+                                items.splice(itemIdx, 1);
+                                updateSectionData(idx, { items });
+                              }} className="text-gray-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          ))}
+                          <button 
+                            onClick={() => updateSectionData(idx, { items: [...(section.data.items || []), ''] })}
+                            className="text-xs font-semibold text-teal-600 flex items-center gap-1 hover:underline"
+                          >
+                            <Plus className="w-3 h-3" /> Add Highlight
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Add Section Buttons */}
+              <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center bg-gray-50/50">
+                <h3 className="font-bold text-gray-500 mb-4">Add a New Section</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {SECTION_TYPES.map(type => {
+                    const Icon = type.icon;
+                    return (
+                      <button
+                        key={type.id}
+                        onClick={() => addSection(type.id)}
+                        className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-100 rounded-xl hover:border-teal-500 hover:shadow-md transition-all group"
+                      >
+                        <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-emerald-50 transition-colors">
+                          <Icon className="w-6 h-6 text-gray-400 group-hover:text-emerald-600" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-700">{type.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          ))}
-
-          {/* Add Section Buttons */}
-          <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center bg-gray-50/50">
-            <h3 className="font-bold text-gray-500 mb-4">Add a New Section</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {SECTION_TYPES.map(type => {
-                const Icon = type.icon;
-                return (
-                  <button
-                    key={type.id}
-                    onClick={() => addSection(type.id)}
-                    className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-100 rounded-xl hover:border-teal-500 hover:shadow-md transition-all group"
-                  >
-                    <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-emerald-50 transition-colors">
-                      <Icon className="w-6 h-6 text-gray-400 group-hover:text-emerald-600" />
-                    </div>
-                    <span className="text-xs font-bold text-gray-700">{type.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Right Column: Settings */}
@@ -460,7 +1253,16 @@ export function PageEditor() {
                   className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-teal-100"
                   value={page.category}
                   onChange={(e) => {
-                    setPage({ ...page, category: e.target.value });
+                    const newCategory = e.target.value;
+                    let updatedSections = [...sections];
+                    if (newCategory === 'travel-guide') {
+                      const res = ensureTravelGuideSections(sections, page.title);
+                      if (res.changed) {
+                        updatedSections = res.sections;
+                        setSections(res.sections);
+                      }
+                    }
+                    setPage({ ...page, category: newCategory });
                     setIsDirty(true);
                   }}
                 >
