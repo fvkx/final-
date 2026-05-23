@@ -325,17 +325,17 @@ export function PageEditor() {
           {page.category === 'travel-guide' ? (
             <div className="space-y-6">
               {/* Premium Mode Notification Banner */}
-              <div className="bg-gradient-to-r from-emerald-800 to-teal-800 rounded-2xl p-6 text-white shadow-md flex items-center justify-between">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
                 <div>
-                  <h3 className="font-extrabold text-lg flex items-center gap-2">
-                    <span className="text-xl">🌴</span> Premium Travel Guide Builder Active
+                  <h3 className="font-extrabold text-lg text-gray-900 flex items-center gap-2">
+                    <span className="text-xl">✨</span> Premium Travel Guide Builder
                   </h3>
-                  <p className="text-emerald-100 text-sm mt-1">
-                    Design a premium, structured travel guide for Balingasag. Fill in the custom details below.
+                  <p className="text-gray-500 text-sm mt-1">
+                    Design a premium, structured travel guide. Fill in the custom details below.
                   </p>
                 </div>
-                <div className="hidden md:flex px-4 py-2 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold uppercase tracking-wider border border-white/10">
-                  Form Mode
+                <div className="hidden md:flex px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold uppercase tracking-wider border border-emerald-100/50">
+                  Active
                 </div>
               </div>
 
@@ -356,20 +356,20 @@ export function PageEditor() {
                     <div className="p-5 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Headline / Banner Title</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Headline / Banner Title</label>
                           <input 
                             type="text" 
-                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                             placeholder="e.g. Balingasag Practical Visitor Info"
                             value={data.title || ''}
                             onChange={(e) => updateTravelHero({ title: e.target.value })}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Subheadline / Intro Text</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Subheadline / Intro Text</label>
                           <input 
                             type="text" 
-                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                             placeholder="e.g. Everything you need to plan a smooth trip"
                             value={data.subtitle || ''}
                             onChange={(e) => updateTravelHero({ subtitle: e.target.value })}
@@ -379,28 +379,28 @@ export function PageEditor() {
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Author Name</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Author Name</label>
                           <input 
                             type="text" 
-                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                             value={data.authorName || ''}
                             onChange={(e) => updateTravelHero({ authorName: e.target.value })}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Author Title / Role</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Author Title / Role</label>
                           <input 
                             type="text" 
-                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                             value={data.authorRole || ''}
                             onChange={(e) => updateTravelHero({ authorRole: e.target.value })}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Read Time Estimate</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Read Time Estimate</label>
                           <input 
                             type="text" 
-                            className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                            className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                             placeholder="e.g. 5 min read"
                             value={data.readTime || ''}
                             onChange={(e) => updateTravelHero({ readTime: e.target.value })}
@@ -411,7 +411,7 @@ export function PageEditor() {
                       {/* Image Upload for Hero Cover */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cover Background Image</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cover Background Image</label>
                           <div className="flex gap-4 items-center">
                             <div className="w-24 h-16 bg-gray-50 border rounded-xl overflow-hidden shrink-0 relative group">
                               {uploadingSectionIdx === idx ? (
@@ -435,7 +435,7 @@ export function PageEditor() {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Author Avatar (Optional)</label>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Author Avatar (Optional)</label>
                           <div className="flex gap-4 items-center">
                             <div className="w-16 h-16 bg-gray-50 border rounded-full overflow-hidden shrink-0 relative group">
                               {uploadingSectionIdx === 9999 ? (
@@ -502,40 +502,40 @@ export function PageEditor() {
                     </div>
                     <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Estimated Budget</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Estimated Budget</label>
                         <input 
                           type="text" 
-                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                           placeholder="e.g. ₱500 - ₱1,500 / day"
                           value={data.budget || ''}
                           onChange={(e) => updateTravelPlanner({ budget: e.target.value })}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Best Season / Time to Visit</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Best Season / Time to Visit</label>
                         <input 
                           type="text" 
-                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                           placeholder="e.g. November to May"
                           value={data.season || ''}
                           onChange={(e) => updateTravelPlanner({ season: e.target.value })}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Recommended Duration</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Recommended Duration</label>
                         <input 
                           type="text" 
-                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                           placeholder="e.g. 2 Days, 1 Night"
                           value={data.duration || ''}
                           onChange={(e) => updateTravelPlanner({ duration: e.target.value })}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Ideal For</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ideal For</label>
                         <input 
                           type="text" 
-                          className="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-teal-100 focus:border-teal-500 text-sm"
+                          className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
                           placeholder="e.g. Families, Friends, Couples"
                           value={data.idealFor || ''}
                           onChange={(e) => updateTravelPlanner({ idealFor: e.target.value })}
@@ -592,10 +592,10 @@ export function PageEditor() {
                             
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">From / Starting Location</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">From / Starting Location</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white" 
                                   placeholder="e.g. Cagayan de Oro City"
                                   value={opt.from || ''}
                                   onChange={(e) => {
@@ -606,40 +606,31 @@ export function PageEditor() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Transit Method & Icon</label>
-                                <div className="flex gap-2">
-                                  <input 
-                                    type="text" 
-                                    className="flex-1 p-2 bg-white border rounded-lg outline-none text-xs" 
-                                    placeholder="e.g. Bus / Minibus"
-                                    value={opt.method || ''}
-                                    onChange={(e) => {
-                                      const newOpts = [...options];
-                                      newOpts[optIdx] = { ...newOpts[optIdx], method: e.target.value };
-                                      updateTravelTransport({ options: newOpts });
-                                    }}
-                                  />
-                                  <select 
-                                    className="p-2 bg-white border rounded-lg outline-none text-xs"
-                                    value={opt.icon || 'bus'}
-                                    onChange={(e) => {
-                                      const newOpts = [...options];
-                                      newOpts[optIdx] = { ...newOpts[optIdx], icon: e.target.value };
-                                      updateTravelTransport({ options: newOpts });
-                                    }}
-                                  >
-                                    <option value="bus">Bus Icon</option>
-                                    <option value="car">Car Icon</option>
-                                    <option value="plane">Plane Icon</option>
-                                    <option value="other">Info Icon</option>
-                                  </select>
-                                </div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Transit Method & Icon</label>
+                                <select 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white"
+                                  value={`${opt.method || 'Bus / Minibus'}|${opt.icon || 'bus'}`}
+                                  onChange={(e) => {
+                                    const [method, icon] = e.target.value.split('|');
+                                    const newOpts = [...options];
+                                    newOpts[optIdx] = { ...newOpts[optIdx], method, icon };
+                                    updateTravelTransport({ options: newOpts });
+                                  }}
+                                >
+                                  <option value="Bus / Minibus|bus">🚌 Bus / Minibus</option>
+                                  <option value="Private Vehicle / Car|car">🚗 Private Vehicle / Car</option>
+                                  <option value="Taxi / Grab|car">🚕 Taxi / Grab</option>
+                                  <option value="Airplane / Flight|plane">✈️ Airplane / Flight</option>
+                                  <option value="Ferry / Boat|other">⛴️ Ferry / Boat</option>
+                                  <option value="Jeepney / Tricycle|other">🛺 Jeepney / Tricycle</option>
+                                  <option value="Other Transit|other">ℹ️ Other Transit</option>
+                                </select>
                               </div>
-                              <div className="w-[85%] md:w-full">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Trip Duration</label>
+                              <div className="w-full">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Trip Duration</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white" 
                                   placeholder="e.g. 1.5 – 2 hours"
                                   value={opt.duration || ''}
                                   onChange={(e) => {
@@ -652,10 +643,10 @@ export function PageEditor() {
                             </div>
                             
                             <div>
-                              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Detailed Description & Cost Details</label>
+                              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Detailed Description & Cost Details</label>
                               <textarea 
                                 rows={2}
-                                className="w-full p-2 bg-white border rounded-lg outline-none text-xs resize-none" 
+                                className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-gray-50 focus:bg-white resize-none" 
                                 placeholder="Describe transit steps, fare costs, departure frequencies, and drop-off points..."
                                 value={opt.description || ''}
                                 onChange={(e) => {
@@ -694,7 +685,7 @@ export function PageEditor() {
                       {/* Accommodations */}
                       <div className="space-y-3">
                         <div className="flex justify-between items-center border-b pb-2 border-gray-100">
-                          <h4 className="text-xs font-extrabold uppercase tracking-widest text-teal-700">🏢 Recommended Places to Stay</h4>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600">🏢 Recommended Places to Stay</h4>
                           <button 
                             onClick={() => {
                               const newAccs = [...accommodations, { name: '', type: 'Hotel', description: '' }];
@@ -707,7 +698,7 @@ export function PageEditor() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {accommodations.map((acc: any, accIdx: number) => (
-                            <div key={accIdx} className="p-3 bg-teal-50/20 border border-teal-100/40 rounded-xl relative space-y-2">
+                            <div key={accIdx} className="p-4 bg-gray-50 border border-gray-100 rounded-2xl relative space-y-3 hover:border-gray-200 transition-all">
                               <button 
                                 onClick={() => {
                                   const newAccs = [...accommodations];
@@ -719,10 +710,10 @@ export function PageEditor() {
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                               <div className="w-[85%] md:w-full">
-                                <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Place Name</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Place Name</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                   placeholder="e.g. Balingasag Beach Resort"
                                   value={acc.name || ''}
                                   onChange={(e) => {
@@ -734,10 +725,10 @@ export function PageEditor() {
                               </div>
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
-                                  <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Lodging Type</label>
+                                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Lodging Type</label>
                                   <input 
                                     type="text" 
-                                    className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs" 
+                                    className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                     placeholder="e.g. Resort / Guesthouse"
                                     value={acc.type || ''}
                                     onChange={(e) => {
@@ -749,10 +740,10 @@ export function PageEditor() {
                                 </div>
                               </div>
                               <div>
-                                <label className="block text-[9px] font-bold text-teal-600 uppercase mb-0.5">Quick Description & Amenities</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Quick Description & Amenities</label>
                                 <textarea 
                                   rows={2}
-                                  className="w-full p-1.5 bg-white border border-teal-100 rounded-lg outline-none text-xs resize-none" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white resize-none" 
                                   placeholder="Describe room rates, pool, beachfront access, contact info..."
                                   value={acc.description || ''}
                                   onChange={(e) => {
@@ -770,7 +761,7 @@ export function PageEditor() {
                       {/* Dining */}
                       <div className="space-y-3">
                         <div className="flex justify-between items-center border-b pb-2 border-gray-100 pt-2">
-                          <h4 className="text-xs font-extrabold uppercase tracking-widest text-orange-700">🍽️ Recommended Dining Options</h4>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600">🍽️ Recommended Dining Options</h4>
                           <button 
                             onClick={() => {
                               const newRests = [...restaurants, { name: '', specialty: 'Local Dishes', description: '' }];
@@ -783,7 +774,7 @@ export function PageEditor() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {restaurants.map((rest: any, restIdx: number) => (
-                            <div key={restIdx} className="p-3 bg-orange-50/20 border border-orange-100/40 rounded-xl relative space-y-2">
+                            <div key={restIdx} className="p-4 bg-gray-50 border border-gray-100 rounded-2xl relative space-y-3 hover:border-gray-200 transition-all">
                               <button 
                                 onClick={() => {
                                   const newRests = [...restaurants];
@@ -795,10 +786,10 @@ export function PageEditor() {
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                               <div className="w-[85%] md:w-full">
-                                <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Diner Name</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Diner Name</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                   placeholder="e.g. Bayside Seafood Eateries"
                                   value={rest.name || ''}
                                   onChange={(e) => {
@@ -810,10 +801,10 @@ export function PageEditor() {
                               </div>
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
-                                  <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Specialty Dish / Vibe</label>
+                                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Specialty Dish / Vibe</label>
                                   <input 
                                     type="text" 
-                                    className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs" 
+                                    className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                     placeholder="e.g. Fresh Grilled Seafood"
                                     value={rest.specialty || ''}
                                     onChange={(e) => {
@@ -825,10 +816,10 @@ export function PageEditor() {
                                 </div>
                               </div>
                               <div>
-                                <label className="block text-[9px] font-bold text-orange-600 uppercase mb-0.5">Food Description & Price</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Food Description & Price</label>
                                 <textarea 
                                   rows={2}
-                                  className="w-full p-1.5 bg-white border border-orange-100 rounded-lg outline-none text-xs resize-none" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white resize-none" 
                                   placeholder="Describe native delicacies, pricing, location, opening hours..."
                                   value={rest.description || ''}
                                   onChange={(e) => {
@@ -893,10 +884,10 @@ export function PageEditor() {
                             
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Category / Category Badge</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tip Category / Badge</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                   placeholder="e.g. Eco-Tourism"
                                   value={tip.category || ''}
                                   onChange={(e) => {
@@ -907,10 +898,10 @@ export function PageEditor() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Headline Title</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Headline Title</label>
                                 <input 
                                   type="text" 
-                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs" 
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white" 
                                   placeholder="e.g. Keep local areas clean"
                                   value={tip.title || ''}
                                   onChange={(e) => {
@@ -921,9 +912,9 @@ export function PageEditor() {
                                 />
                               </div>
                               <div className="w-[85%] md:w-full">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Icon Theme</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tip Icon Theme</label>
                                 <select 
-                                  className="w-full p-2 bg-white border rounded-lg outline-none text-xs"
+                                  className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white"
                                   value={tip.icon || 'info'}
                                   onChange={(e) => {
                                     const newTips = [...tips];
@@ -943,10 +934,10 @@ export function PageEditor() {
                             </div>
                             
                             <div>
-                              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tip Body Paragraph</label>
+                              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tip Body Paragraph</label>
                               <textarea 
                                 rows={2}
-                                className="w-full p-2 bg-white border rounded-lg outline-none text-xs resize-none" 
+                                className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm transition-all bg-white resize-none" 
                                 placeholder="Explain this custom recommendation in detail..."
                                 value={tip.tip || ''}
                                 onChange={(e) => {
@@ -982,7 +973,7 @@ export function PageEditor() {
                       <textarea
                         rows={10}
                         placeholder="Write your custom detailed itinerary or other paragraphs here..."
-                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-teal-100 border border-transparent focus:border-teal-100 transition-all resize-y text-sm leading-relaxed"
+                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-emerald-100 border border-gray-200 focus:border-emerald-500 transition-all resize-y text-sm leading-relaxed focus:bg-white"
                         value={data.body || ''}
                         onChange={(e) => updateTravelRichText({ body: e.target.value })}
                       />

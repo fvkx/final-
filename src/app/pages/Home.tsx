@@ -97,7 +97,6 @@ export function Home() {
     { label: 'Tourist Spots', value: `${stats.spots}+`, desc: 'Natural & heritage sites' },
     { label: 'Festivals', value: `${stats.events}+`, desc: 'Annual celebrations' },
     { label: 'Barangays', value: '30', desc: 'Vibrant communities' },
-    { label: 'Culture', value: `${stats.traditions}+`, desc: 'Living traditions' },
   ];
 
   return (
@@ -152,7 +151,7 @@ export function Home() {
 
       {/* Stats Bar */}
       <section className="bg-emerald-700 text-white py-8 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
           {highlights.map((h) => (
             <div key={h.label}>
               <div className="text-3xl font-extrabold text-emerald-200">{h.value}</div>

@@ -21,7 +21,14 @@ export function TouristSpots() {
     try {
       const response = await contentApi.getAll('tourist-spot');
       if (response.success) {
-        setSpots(response.data.filter((p: any) => p.status === 'published'));
+        const publishedSpots = response.data.filter((p: any) => p.status === 'published');
+        // Sort featured spots first
+        const sortedSpots = publishedSpots.sort((a: any, b: any) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return 0;
+        });
+        setSpots(sortedSpots);
       }
     } catch (error) {
       console.error('Failed to fetch spots:', error);

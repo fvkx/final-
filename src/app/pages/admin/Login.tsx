@@ -28,10 +28,20 @@ export function Login() {
         }));
         navigate('/admin');
       } else {
-        setError(response.message || 'Login failed');
+        const msg = response.message || '';
+        if (msg.toLowerCase().includes('invalid credentials') || msg.toLowerCase().includes('failed')) {
+          setError('Incorrect username or password. Please check your spelling and try again.');
+        } else {
+          setError(msg.replace(/^api error:\s*/i, ''));
+        }
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+      const msg = err.message || '';
+      if (msg.toLowerCase().includes('invalid credentials') || msg.toLowerCase().includes('failed')) {
+        setError('Incorrect username or password. Please check your spelling and try again.');
+      } else {
+        setError(msg.replace(/^api error:\s*/i, '') || 'An unexpected login error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
