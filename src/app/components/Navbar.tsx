@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, NavLink } from 'react-router-dom';
 import { Menu, X, MapPin } from 'lucide-react';
 
 const navLinks = [
@@ -15,12 +15,7 @@ const navLinks = [
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
-
-  const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
-  };
+  
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm shadow-md sticky top-0 z-50">
@@ -39,17 +34,19 @@ export function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
-            <Link
+            <NavLink
               key={link.path}
               to={link.path}
-              className={`px-3 py-2 rounded-md text-sm transition-colors ${
-                isActive(link.path)
-                  ? 'bg-emerald-50 text-emerald-700 font-semibold'
-                  : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
-              }`}
+              className={({ isActive }) =>
+                `px-3 py-2 rounded-md text-sm transition-colors ${
+                  isActive
+                    ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                    : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
+                }`
+              }
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
 
@@ -68,18 +65,20 @@ export function Navbar() {
         <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.path}
                 to={link.path}
                 onClick={() => setMenuOpen(false)}
-                className={`px-4 py-3 rounded-md text-sm transition-colors ${
-                  isActive(link.path)
-                    ? 'bg-emerald-50 text-emerald-700 font-semibold'
-                    : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
-                }`}
+                className={({ isActive }) =>
+                  `px-4 py-3 rounded-md text-sm transition-colors ${
+                    isActive
+                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                      : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
+                  }`
+                }
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
           </div>
         </div>

@@ -324,21 +324,6 @@ export function PageEditor() {
         <div className="lg:col-span-2 space-y-6">
           {page.category === 'travel-guide' ? (
             <div className="space-y-6">
-              {/* Premium Mode Notification Banner */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-                <div>
-                  <h3 className="font-extrabold text-lg text-gray-900 flex items-center gap-2">
-                    <span className="text-xl">✨</span> Premium Travel Guide Builder
-                  </h3>
-                  <p className="text-gray-500 text-sm mt-1">
-                    Design a premium, structured travel guide. Fill in the custom details below.
-                  </p>
-                </div>
-                <div className="hidden md:flex px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold uppercase tracking-wider border border-emerald-100/50">
-                  Active
-                </div>
-              </div>
-
               {/* 1. Hero & Author Card */}
               {(() => {
                 const idx = getSectionIndex('travel_hero');
@@ -1245,12 +1230,18 @@ export function PageEditor() {
                   value={page.category}
                   onChange={(e) => {
                     const newCategory = e.target.value;
-                    let updatedSections = [...sections];
+                    // Switching to travel-guide: ensure the travel guide template sections exist
                     if (newCategory === 'travel-guide') {
                       const res = ensureTravelGuideSections(sections, page.title);
                       if (res.changed) {
-                        updatedSections = res.sections;
                         setSections(res.sections);
+                      }
+                    } else {
+                      // Switching away from travel-guide: remove travel-specific template sections
+                      const travelOnly = ['travel_hero', 'travel_planner', 'travel_transport', 'travel_directory', 'travel_tips', 'rich_text'];
+                      const filtered = sections.filter(s => !travelOnly.includes(s.type));
+                      if (filtered.length !== sections.length) {
+                        setSections(filtered);
                       }
                     }
                     setPage({ ...page, category: newCategory });

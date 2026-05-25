@@ -30,7 +30,7 @@ const curatedSections = [
       'Faith Center: The Sta. Rita de Cascia Parish Church stands as a symbol of the town\'s resilience. Its brick facade links the community directly to the early Jesuit mission established in 1744.',
       'The Santo Niño Legacy: Cebuano merchant Ignacio Juan Vega introduced the deep devotion to the Señor Santo Niño in the 1800s. This eventually blossomed into the Sinulog sa Balingasag, the town\'s grandest annual cultural dance festival celebrated every January.'
     ],
-    image: 'https://images.unsplash.com/photo-1581513118044-696c147c1a66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwZmVzdGl2YWwlMjBjb2xvcmZ1bCUyMGNlbGVicmF0aW9ufGVufDF8fHx8MTc3Nzk2NTg5NXww&ixlib=rb-4.1.0&q=80&w=1080',
+    image: '/uploads/about_history.jpg',
     imageAlt: 'Religious Devotions & Sinulog sa Balingasag'
   },
   {
@@ -39,7 +39,7 @@ const curatedSections = [
       'Kakanin Traditions: Local food culture is anchored in sweet sticky rice treats.',
       'Bibingka: The town is locally celebrated for its native Bibingka (baked rice cakes), a popular comfort food and souvenir for travelers passing through the national highway.'
     ],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaWxpcGlubyUyMGZvb2QlMjBkZXNzZXJ0JTIwYmliaW5na2F8ZW58MXx8fHwxNzc3OTY1ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: '/uploads/1048Bibingka_Puto_bumbong_making_Philippines_04.jpg',
     imageAlt: 'Balingasag Culinary Heritage & Bibingka'
   }
 ];

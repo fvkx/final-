@@ -1,16 +1,17 @@
 import { useEffect } from "react";
-import { MapPin, Navigation, Bus, Car, Clock, Info } from "lucide-react";
+import { MapPin, Navigation, Clock, Info } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const landmarks = [
   {
-    name: "St. Michael the Archangel Parish Church",
-    desc: "Historic Spanish-era church at the town center",
+    name: "Sta. Rita de Cascia Parish Church",
+    desc: "As a designated Jubilee Church for the 500 Years of Christianity in the Philippines, it serves as a major spiritual and cultural anchor for the region",
     type: "Heritage",
   },
   {
-    name: "Binaliw Falls",
-    desc: "Multi-tiered waterfall tucked in Barangay Binaliw",
-    type: "Nature",
+    name: "Vega Ancestral House",
+    desc: "Estimated to be around 200 years old, this is Balingasag's most famous heritage structure.",
+    type: "Heritage",
   },
   {
     name: "Macajalar Bay View Deck",
@@ -34,56 +35,6 @@ const landmarks = [
   },
 ];
 
-const directions = [
-  {
-    from: "From Cagayan de Oro City (via Bus)",
-    icon: Bus,
-    steps: [
-      "Go to the Agora Bus Terminal in Cagayan de Oro City.",
-      "Board a Cagayan de Oro to Gingoog or Davao-bound bus.",
-      "Tell the conductor you are disembarking at Balingasag.",
-      "The journey takes approximately 1.5 to 2 hours depending on traffic.",
-      "Fare: approx. ₱80–₱120 per person.",
-      "From the Balingasag bus stop, tricycles and habal-habals (motorcycle taxis) are available to take you to your destination within the municipality.",
-    ],
-  },
-  {
-    from: "From Cagayan de Oro City (via Private Vehicle)",
-    icon: Car,
-    steps: [
-      "From CDO, take the Butuan-Cagayan de Oro-Iligan Road (national highway) heading east.",
-      "Pass through the eastern barangays of CDO (Gusa, Cugman, Tablon, Bugo).",
-      "Continue past the municipalities of Tagoloan and Villanueva.",
-      "Pass through the municipality of Jasaan.",
-      "Continue straight along the well-paved coastal national highway until you reach Balingasag town proper.",
-      "Total drive time: approximately 1 hour in light traffic.",
-      'Google Maps: Search "Balingasag, Misamis Oriental"',
-    ],
-  },
-  {
-    from: "From Gingoog City",
-    icon: Bus,
-    steps: [
-      "From Gingoog City Bus Terminal, board a bus or jeepney heading west toward CDO.",
-      "Balingasag is approximately 30–40 km west of Gingoog City.",
-      "The journey takes approximately 45 minutes to 1 hour.",
-      "Fare: approx. ₱40–₱70 per person.",
-      "Tricycles and habal-habal are available at the Balingasag stop.",
-    ],
-  },
-  {
-    from: "From Laguindingan Airport (CGY)",
-    icon: Car,
-    steps: [
-      "The Laguindingan Airport (CGY) serves Cagayan de Oro and nearby areas.",
-      "From the airport, take a taxi or Grab to CDO Agora Bus Terminal (approx. 30 min, ₱300–₱500).",
-      "Then board a bus to Balingasag from Agora Terminal (1.5 hours).",
-      "Alternatively, hire a private van or multicab directly from the airport to Balingasag.",
-      "Pre-arranged vehicle hire (airport to Balingasag): approx. ₱800–₱1,500.",
-    ],
-  },
-];
-
 export function MapPage() {
   useEffect(() => {
     document.title = "Map & Directions | Balingasag Tourism Guide";
@@ -102,8 +53,8 @@ export function MapPage() {
             Map & How to Get There
           </h1>
           <p className="text-sky-100 text-lg max-w-2xl mx-auto">
-            Find Balingasag on the map and follow our step-by-step directions
-            from major nearby cities and transit points.
+            Find Balingasag on the map and check the travel guide for the best
+            routes, tips, and local advice for your visit.
           </p>
         </div>
       </div>
@@ -151,7 +102,7 @@ export function MapPage() {
         {/* Key Landmarks */}
         <section>
           <div className="mb-5">
-            <span className="text-emerald-600 text-sm font-semibold uppercase tracking-widest">
+            <span className="text-sky-600 text-sm font-semibold uppercase tracking-widest">
               Orientation
             </span>
             <h2 className="text-3xl font-extrabold text-gray-900 mt-1">
@@ -164,12 +115,8 @@ export function MapPage() {
                 key={lm.name}
                 className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3"
               >
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${lm.type === "Tourism" ? "bg-emerald-100" : "bg-sky-100"}`}
-                >
-                  <MapPin
-                    className={`w-4 h-4 ${lm.type === "Tourism" ? "text-emerald-700" : "text-sky-700"}`}
-                  />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-sky-100">
+                  <MapPin className="w-4 h-4 text-sky-700" />
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900 text-sm">
@@ -182,63 +129,32 @@ export function MapPage() {
           </div>
         </section>
 
-        {/* Step-by-Step Directions */}
+        {/* Travel Guide CTA */}
         <section>
-          <div className="mb-7">
-            <span className="text-blue-600 text-sm font-semibold uppercase tracking-widest">
-              Directions
-            </span>
-            <h2 className="text-3xl font-extrabold text-gray-900 mt-1">
-              Step-by-Step Directions
-            </h2>
-            <p className="text-gray-500 mt-1">
-              How to reach Balingasag from major nearby cities and transit hubs.
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {directions.map((dir) => {
-              const Icon = dir.icon;
-              return (
-                <div
-                  key={dir.from}
-                  className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden"
-                >
-                  <div className="bg-sky-50 border-b border-sky-100 px-6 py-4 flex items-center gap-3">
-                    <div className="w-9 h-9 bg-sky-200 rounded-lg flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-sky-800" />
-                    </div>
-                    <div>
-                      <div className="font-bold text-gray-900">{dir.from}</div>
-                    </div>
-                  </div>
-                  <div className="px-6 py-5">
-                    <ol className="space-y-3">
-                      {dir.steps.map((step, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-3 text-sm text-gray-700"
-                        >
-                          <span className="w-5 h-5 bg-sky-100 text-sky-700 rounded-full text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                            {i + 1}
-                          </span>
-                          {step}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="bg-sky-50 border border-sky-100 rounded-2xl p-7 text-center">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-3xl font-extrabold text-gray-900 mb-3">
+                Want a full travel guide for Balingasag?
+              </h3>
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+                Skip the step-by-step directions here and open the travel guide for complete routes, local tips, and visitor information.
+              </p>
+              <Link
+                to="/travel-guide"
+                className="inline-flex items-center justify-center rounded-xl bg-white text-sky-900 px-8 py-3 font-bold shadow-sm hover:bg-slate-100 transition-all"
+              >
+                View Travel Guide
+              </Link>
+            </div>
           </div>
         </section>
 
         {/* Local Transport Note */}
         <section>
-          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-7">
+          <div className="bg-sky-50 border border-sky-100 rounded-2xl p-7">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-emerald-200 rounded-xl flex items-center justify-center shrink-0">
-                <Navigation className="w-5 h-5 text-emerald-800" />
+              <div className="w-10 h-10 bg-sky-200 rounded-xl flex items-center justify-center shrink-0">
+                <Navigation className="w-5 h-5 text-sky-800" />
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 mb-2">
@@ -254,11 +170,11 @@ export function MapPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-1.5 text-gray-600">
-                    <Clock className="w-4 h-4 text-emerald-600" />
+                    <Clock className="w-4 h-4 text-sky-600" />
                     Tricycle: ₱15–₱40 per trip within town
                   </div>
                   <div className="flex items-center gap-1.5 text-gray-600">
-                    <Clock className="w-4 h-4 text-emerald-600" />
+                    <Clock className="w-4 h-4 text-sky-600" />
                     Habal-habal: ₱50–₱150 to upland barangays
                   </div>
                 </div>

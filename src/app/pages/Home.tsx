@@ -21,7 +21,7 @@ const categoryCards = [
     icon: BookOpen,
     path: '/about',
     color: 'from-emerald-500 to-teal-600',
-    image: 'https://images.unsplash.com/photo-1758782551912-80cf4c578220?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waWNhbCUyMGlzbGFuZCUyMGJheSUyMFBoaWxpcHBpbmVzJTIwYWVyaWFsJTIwdmlld3xlbnwxfHx8fDE3Nzc5NjU5MDR8MA&ixlib=rb-4.1.0&q=80&w=1080'
+    image: 'uploads/about_history.jpg'
   },
   {
     title: 'Culture & Heritage',
@@ -79,7 +79,8 @@ export function Home() {
       const response = await contentApi.getAll();
       if (response.success) {
         const allPages = response.data;
-        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published' && p.category === 'tourist-spot').slice(0, 3));
+        // Include featured tourist spots and featured events in the Featured section
+        setFeaturedPages(allPages.filter((p: any) => p.featured && p.status === 'published' && (p.category === 'tourist-spot' || p.category === 'event')).slice(0, 3));
 
         // Calculate counts
         setStats({
@@ -105,7 +106,7 @@ export function Home() {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1758782551916-1723a9cd00eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwdHJvcGljYWwlMjBiZWFjaCUyMGNvYXN0bGluZXxlbnwxfHx8fDE3Nzc5NjU4OTR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="uploads/People's_Palace_-_Facade.jpg"
             alt="Balingasag coastline"
             className="w-full h-full object-cover"
           />
@@ -291,7 +292,7 @@ export function Home() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-lg">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1739045969692-f694965be10c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMHdhdGVyZmFsbCUyMG5hdHVyZXxlbnwxfHx8fDE3Nzc5NjU4OTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="uploads/518100577_1324067593056508_8739530796121957987_n (1).jpg"
                   alt="Waterfall"
                   className="w-full h-full object-cover"
                 />
@@ -299,14 +300,14 @@ export function Home() {
               <div className="space-y-4 mt-6">
                 <div className="rounded-2xl overflow-hidden aspect-square shadow-lg">
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1599302994569-6fd86e9529e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwaW5kaWdlbm91cyUyMGN1bHR1cmUlMjB3ZWF2aW5nJTIwY3JhZnRzfGVufDF8fHx8MTc3Nzk2NTkwMHww&ixlib=rb-4.1.0&q=80&w=1080"
+                    src="uploads/Opol,_Misamis_Oriental_waterfront2.JPG"
                     alt="Culture"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="rounded-2xl overflow-hidden aspect-square shadow-lg">
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1771767643385-0d329fc614a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lcyUyMG1hbmdyb3ZlJTIwZm9yZXN0JTIwbmF0dXJlfGVufDF8fHx8MTc3Nzk2NTg5Nnww&ixlib=rb-4.1.0&q=80&w=1080"
+                    src="uploads/1779545484_470495063_1515200455853790_1680661349795143633_n1.jpg"
                     alt="Mangrove"
                     className="w-full h-full object-cover"
                   />

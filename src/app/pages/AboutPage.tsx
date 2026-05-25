@@ -57,7 +57,7 @@ export function AboutPage() {
       <div className="relative bg-emerald-800 py-20 px-4 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1758782551916-1723a9cd00eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQaGlsaXBwaW5lJTIwdHJvcGljYWwlMjBiZWFjaCUyMGNvYXN0bGluZXxlbnwxfHx8fDE3Nzc5NjU4OTR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="uploads/about_history.jpg"
             alt="Balingasag"
             className="w-full h-full object-cover"
           />
