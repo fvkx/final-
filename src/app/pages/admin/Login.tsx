@@ -101,7 +101,6 @@ export function Login() {
                 </div>
                 <span className="font-extrabold text-gray-900 tracking-tight text-lg">Balingasag Tourism</span>
               </div>
-
               <h2 className="text-2xl font-black text-gray-900 tracking-tight">
                 Sign in
               </h2>
@@ -133,7 +132,7 @@ export function Login() {
                     />
                   </div>
                 </div>
-
+                
                 <div>
                   <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Password</label>
                   <div className="relative">
@@ -152,6 +151,12 @@ export function Login() {
                     />
                   </div>
                 </div>
+              </div>
+              
+              <div className="flex items-center justify-between mb-1.5">
+                <a href="/forgot-password" className="text-[9px] font-bold text-emerald-600 hover:text-emerald-700 uppercase tracking-wider transition-colors">
+                  Forgot Password?
+                </a>
               </div>
 
               <div className="pt-2">

@@ -68,10 +68,43 @@ export function Home() {
     traditions: 0
   });
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const [prevBackgroundIndex, setPrevBackgroundIndex] = useState<number | null>(null);
+  const [prevVisible, setPrevVisible] = useState(false);
+  const transitionDuration = 800; // ms, keep < 4500 (interval)
+
+  const backgroundImages = [
+    "uploads/People's_Palace_-_Facade.jpg",
+    'uploads/518100577_1324067593056508_8739530796121957987_n (1).jpg',
+    'uploads/about_history.jpg',
+    'uploads/about_tourism.jpg',
+  ];
 
   useEffect(() => {
     document.title = 'Balingasag Tourism Guide | Discover Balingasag';
     fetchContent();
+  }, []);
+
+  useEffect(() => {
+    const timeouts: number[] = [];
+    const interval = window.setInterval(() => {
+      setBackgroundIndex((current) => {
+        setPrevBackgroundIndex(current);
+        setPrevVisible(true);
+
+        const next = (current + 1) % backgroundImages.length;
+
+        timeouts.push(window.setTimeout(() => setPrevVisible(false), 50));
+        timeouts.push(window.setTimeout(() => setPrevBackgroundIndex(null), transitionDuration + 60));
+
+        return next;
+      });
+    }, 4500);
+
+    return () => {
+      window.clearInterval(interval);
+      timeouts.forEach((id) => window.clearTimeout(id));
+    };
   }, []);
 
   const fetchContent = async () => {
@@ -106,11 +139,20 @@ export function Home() {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="uploads/People's_Palace_-_Facade.jpg"
+            src={backgroundImages[backgroundIndex]}
             alt="Balingasag coastline"
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover z-0"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+
+          {prevBackgroundIndex !== null && (
+            <ImageWithFallback
+              src={backgroundImages[prevBackgroundIndex]}
+              alt="previous background"
+              className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700 ease-in-out ${prevVisible ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60 z-0" />
         </div>
 
         <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto">

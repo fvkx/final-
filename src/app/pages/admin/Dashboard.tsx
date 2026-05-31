@@ -1,6 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Users, Mail, Bell, FileText, ExternalLink } from 'lucide-react';
 import { dashboardApi } from '../../lib/adminApi';
+import {
+  ChartContainer,
+  ChartLegendContent,
+  ChartTooltipContent,
+} from '../../components/ui/chart';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 interface DashboardStats {
   totalUsers: number;
@@ -47,7 +62,22 @@ export function Dashboard() {
     { title: 'Unread Inquiries', value: stats?.unreadInquiries || 0, icon: Bell, color: 'text-rose-600 bg-rose-50' },
   ];
 
-  const draftItems = stats?.drafts ?? [];
+  const trafficData = [
+    { name: 'Mon', visitors: 420, pageViews: 880 },
+    { name: 'Tue', visitors: 520, pageViews: 1020 },
+    { name: 'Wed', visitors: 610, pageViews: 1170 },
+    { name: 'Thu', visitors: 530, pageViews: 980 },
+    { name: 'Fri', visitors: 700, pageViews: 1240 },
+    { name: 'Sat', visitors: 760, pageViews: 1350 },
+    { name: 'Sun', visitors: 690, pageViews: 1290 },
+  ];
+
+  const userData = [
+    { name: 'Week 1', signups: 14, inquiries: 9 },
+    { name: 'Week 2', signups: 18, inquiries: 12 },
+    { name: 'Week 3', signups: 22, inquiries: 15 },
+    { name: 'Week 4', signups: 20, inquiries: 13 },
+  ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -83,43 +113,57 @@ export function Dashboard() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">Recent Drafts</h2>
-            <p className="text-sm text-gray-500 mt-1">Latest draft content pages for quick review and edit.</p>
+      <div className="grid gap-6 xl:grid-cols-2">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900">Traffic Trends</h2>
+            <p className="text-sm text-gray-500 mt-1">Visitor and page view performance over the last 7 days.</p>
           </div>
-          <a
-            href="/admin/content?status=draft"
-            className="inline-flex items-center justify-center rounded-full border border-emerald-600 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50"
-          >
-            View all drafts
-          </a>
+          <div className="h-80 px-6 pb-6">
+            <ChartContainer
+              config={{
+                visitors: { label: 'Visitors', color: 'rgb(34 197 94)' },
+                pageViews: { label: 'Page Views', color: 'rgb(59 130 246)' },
+              }}
+              className="h-full"
+            >
+              <LineChart data={trafficData} margin={{ top: 8, right: 20, left: -12, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <Tooltip content={<ChartTooltipContent />} />
+                <ChartLegendContent />
+                <Line type="monotone" dataKey="visitors" stroke="var(--color-visitors)" strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="pageViews" stroke="var(--color-pageViews)" strokeWidth={3} dot={false} />
+              </LineChart>
+            </ChartContainer>
+          </div>
         </div>
-        <div className="divide-y divide-gray-100">
-          {draftItems.length > 0 ? (
-            draftItems.map((draft) => (
-              <a
-                key={draft.id}
-                href={`/admin/content/edit/${draft.id}`}
-                className="block px-6 py-4 hover:bg-slate-50 transition-colors"
-              >
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">{draft.title || draft.slug}</p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {draft.category || 'Uncategorized'} · {new Date(draft.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 uppercase tracking-wide">
-                    {draft.status}
-                  </span>
-                </div>
-              </a>
-            ))
-          ) : (
-            <div className="px-6 py-8 text-center text-sm text-gray-500">No draft items available.</div>
-          )}
+
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900">New Users & Inquiries</h2>
+            <p className="text-sm text-gray-500 mt-1">Weekly new signups compared with incoming inquiries.</p>
+          </div>
+          <div className="h-80 px-6 pb-6">
+            <ChartContainer
+              config={{
+                signups: { label: 'New Signups', color: 'rgb(79 70 229)' },
+                inquiries: { label: 'Inquiries', color: 'rgb(234 179 8)' },
+              }}
+              className="h-full"
+            >
+              <BarChart data={userData} margin={{ top: 8, right: 20, left: -12, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <Tooltip content={<ChartTooltipContent />} />
+                <ChartLegendContent />
+                <Bar dataKey="signups" fill="var(--color-signups)" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="inquiries" fill="var(--color-inquiries)" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          </div>
         </div>
       </div>
     </div>

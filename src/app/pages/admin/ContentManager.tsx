@@ -17,6 +17,7 @@ export function ContentManager() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [activeStatus, setActiveStatus] = useState('all');
   const { confirm, toast } = useNotifications();
 
   useEffect(() => {
@@ -60,7 +61,8 @@ export function ContentManager() {
     // Backend returns category_slug from the JOIN
     const pageCategory = page.category_slug || page.category;
     const matchesCategory = activeCategory === 'all' || pageCategory === activeCategory;
-    return matchesSearch && matchesCategory;
+    const matchesStatus = activeStatus === 'all' || page.status === activeStatus;
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
   return (
@@ -79,8 +81,8 @@ export function ContentManager() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2 relative">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
@@ -110,6 +112,18 @@ export function ContentManager() {
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
+          </select>
+        </div>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <select
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-100 focus:border-emerald-200 outline-none appearance-none transition-all"
+            value={activeStatus}
+            onChange={(e) => setActiveStatus(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
           </select>
         </div>
       </div>

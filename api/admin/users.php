@@ -8,7 +8,10 @@ $user = verifyToken();
 // Only admin can manage users
 if ($user->role !== 'admin' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Forbidden: Only admins can manage users']);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Access denied. Managing users is restricted. Only administrators can manage users.',
+    ]);
     exit;
 }
 
